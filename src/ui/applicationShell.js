@@ -13,6 +13,7 @@ import { CockpitViewController, CockpitDisplayPortal } from './cockpit.js';
 import { ContextControls } from './context.js';
 import { CctvControls } from './cctv.js';
 import { RadioControls } from './radio.js';
+import { AtcControls } from './atc.js';
 import { LocationControls } from './location.js';
 import { bindClearLayersControl } from './layers.js';
 import { bindCameraOrientationControls } from './cameraOrientationControls.js';
@@ -590,6 +591,7 @@ export class StyleManager {
     this._initLeftPanelAdaptiveLayout();
     this._initRightPanelAdaptiveLayout();
     this._initRadioPanel();
+    this._initAtcPanel();
     this._initCctvPanel();
     this._initGlobalContextPanel();
     this._initLocationBar();
@@ -1688,6 +1690,7 @@ export class StyleManager {
     this._syncContextModeButtons();
     this._cctvControls.connect();
     this._radioControls.connect();
+    this._atcControls?.connect();
     this._connectDirectionsCamera();
     if (!this._awarenessSelectedHandler) {
       this._awarenessSelectedHandler = (event) =>
@@ -1839,6 +1842,65 @@ export class StyleManager {
         preservePanelStateDuringClear: () =>
           this._preservePanelStateDuringLayerClear,
         scheduleLayout: () => this._scheduleRightPanelLayout(),
+      },
+    });
+  }
+
+  /** Wire the ATC Radio companion controls beside Radio. */
+  _initAtcPanel() {
+    const { atcLayer, radioLayer, flightsLayer, militaryFlightsLayer } =
+      this.services;
+    this._atcControls?.destroy();
+    if (!atcLayer || !this._atcPanel) {
+      this._atcControls = null;
+      return;
+    }
+    const trackedPosition = () => {
+      for (const layer of [flightsLayer, militaryFlightsLayer]) {
+        const info = layer?.getTrackedInfo?.();
+        if (
+          info &&
+          Number.isFinite(info.latitude) &&
+          Number.isFinite(info.longitude)
+        ) {
+          return {
+            lat: info.latitude,
+            lon: info.longitude,
+            altitudeM: Number.isFinite(info.altitudeM)
+              ? info.altitudeM
+              : undefined,
+          };
+        }
+      }
+      return null;
+    };
+    this._atcControls = new AtcControls({
+      elements: {
+        _atcPanel: this._atcPanel,
+        _atcLayerState: this._atcLayerState,
+        _atcEnableBtn: this._atcEnableBtn,
+        _atcNearestBtn: this._atcNearestBtn,
+        _atcStopBtn: this._atcStopBtn,
+        _atcAirportName: this._atcAirportName,
+        _atcAirportMeta: this._atcAirportMeta,
+        _atcFeedList: this._atcFeedList,
+        _atcPlaybackState: this._atcPlaybackState,
+      },
+      atc: atcLayer,
+      actions: {
+        isRegistered: () => this._dataManager?.layers?.has('atc'),
+        isEnabled: () => this._dataManager?.isEnabled('atc'),
+        setEnabled: (enabled, options) =>
+          this._dataManager.setEnabled('atc', enabled, options),
+        runUserAction: (...args) => this._runUserFacingContextAction(...args),
+        setPanelCollapsed: (...args) => this.setPanelCollapsed(...args),
+        preservePanelStateDuringClear: () =>
+          this._preservePanelStateDuringLayerClear,
+        scheduleLayout: () => this._scheduleRightPanelLayout(),
+        trackedPosition,
+        stopRadioPlayback: () =>
+          radioLayer?.stopPlayback?.({ origin: 'atc-playback' }),
+        subscribeRadio: (listener) => radioLayer?.subscribe?.(listener),
       },
     });
   }
@@ -3684,6 +3746,7 @@ export class StyleManager {
     this._locationControls?.destroy();
     this._cctvControls?.destroy();
     this._radioControls?.destroy();
+    this._atcControls?.destroy();
     this.cockpitView?.stop();
     this._cockpitDisplayPortal?.stop();
     this._visualSettings.stop();

@@ -318,6 +318,30 @@ export const ACTION_DESCRIPTIONS = {
       },
     },
   },
+  control_atc: {
+    description:
+      'Listen to live air-traffic-control radio (LiveATC) for a major US airport. play tunes an airport feed and turns the ATC Radio layer on; nearest tunes the airport closest to the tracked aircraft (or the current view) and picks tower, approach or center from its altitude and distance; stop ends ATC audio. Examples: "play San Francisco tower" → play icao=KSFO kind=tower; "tune the nearest approach" → nearest kind=approach; "stop ATC" → stop.',
+    $position: 1,
+    parameters: {
+      properties: {
+        action: {
+          description:
+            'play for a named airport, nearest for the airport closest to the tracked aircraft or view, stop to silence ATC.',
+          $position: 2,
+        },
+        icao: {
+          description:
+            'Airport code or name for play: ICAO (KSFO), IATA (SFO) or the city/airport name ("San Francisco", "JFK").',
+          $position: 2,
+        },
+        kind: {
+          description:
+            'Controller position to tune. Omit to let GEV choose (tower for play; altitude-based for nearest).',
+          $position: 2,
+        },
+      },
+    },
+  },
   track_entity: {
     description:
       'Find and follow a specific aircraft (callsign/ICAO hex), ship (name/MMSI), or satellite (name/NORAD id) on enabled layers. Camera follows the entity.',

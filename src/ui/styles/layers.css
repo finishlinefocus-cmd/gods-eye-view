@@ -1234,6 +1234,7 @@
   min-height: 0;
 }
 #right-context-rail #global-context-panel:not(.collapsed) .context-mode-view,
+#right-context-rail #global-context-panel:not(.collapsed) #atc-panel,
 #right-context-rail #global-context-panel:not(.collapsed) #radio-panel {
   /* These sections share the Context panel's existing scroller. Keep their
      natural heights so flexbox cannot compress one section and let its

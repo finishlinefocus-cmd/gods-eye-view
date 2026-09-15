@@ -187,6 +187,19 @@
     ],
     "external": []
   },
+  "atc-provider": {
+    "runtime": "node",
+    "exports": ["./server/providers/atc"],
+    "modules": [
+      "server/providers/atc.js",
+      "server/providers/atc/constants.js",
+      "server/providers/atc/stream.js",
+      "src/layers/atc/directory.js",
+      "src/layers/atc/feedKinds.js",
+      "src/layers/atc/liveatcFeeds.js"
+    ],
+    "external": []
+  },
   "overpass-provider": {
     "runtime": "node",
     "exports": ["./server/providers/overpass"],
@@ -401,6 +414,11 @@
     ],
     "external": []
   },
+  "atc-controls": {
+    "exports": ["./ui/atc"],
+    "modules": ["src/ui/atc.js", "src/ui/atcControls.js"],
+    "external": []
+  },
   "cctv-controls": {
     "exports": ["./ui/cctv"],
     "modules": [
@@ -570,7 +588,9 @@
       "src/ui/visualPresets.js",
       "src/ui/visualSettings.js",
       "src/worldFocus.js",
-      "src/data/feedState.js"
+      "src/data/feedState.js",
+      "src/ui/atc.js",
+      "src/ui/atcControls.js"
     ],
     "external": ["cesium"]
   },
@@ -597,7 +617,8 @@
       "src/ui/styles/command-dock-sliding.css",
       "src/ui/styles/voice-cost.css",
       "src/ui/styles/first-run.css",
-      "src/ui/styles/provider-settings.css"
+      "src/ui/styles/provider-settings.css",
+      "src/ui/styles/atc.css"
     ],
     "external": []
   },
@@ -1011,6 +1032,27 @@
       "src/layers/radio/volume.js",
       "src/ui/radioTunerModel.js",
       "src/data/inputOwnership.js"
+    ],
+    "external": ["cesium"]
+  },
+  "atc-layer": {
+    "exports": ["./layers/atc"],
+    "modules": [
+      "src/data/iconOrientation.js",
+      "src/data/inputOwnership.js",
+      "src/layers/atc/controls.js",
+      "src/layers/atc/directory.js",
+      "src/layers/atc/feedKinds.js",
+      "src/layers/atc/index.js",
+      "src/layers/atc/interaction.js",
+      "src/layers/atc/lifecycle.js",
+      "src/layers/atc/liveatcFeeds.js",
+      "src/layers/atc/playback.js",
+      "src/layers/atc/policy.js",
+      "src/layers/atc/presentation.js",
+      "src/layers/atc/rendering.js",
+      "src/layers/atc/selection.js",
+      "src/layers/atc/state.js"
     ],
     "external": ["cesium"]
   },
@@ -1672,7 +1714,23 @@
       "src/data/gtfsRealtime.js",
       "src/layers/transit/trails.js",
       "src/layers/transit/movement.js",
-      "src/layers/transit/qaMetrics.js"
+      "src/layers/transit/qaMetrics.js",
+      "src/layers/atc/controls.js",
+      "src/layers/atc/directory.js",
+      "src/layers/atc/feedKinds.js",
+      "src/layers/atc/index.js",
+      "src/layers/atc/interaction.js",
+      "src/layers/atc/lifecycle.js",
+      "src/layers/atc/liveatcFeeds.js",
+      "src/layers/atc/playback.js",
+      "src/layers/atc/policy.js",
+      "src/layers/atc/presentation.js",
+      "src/layers/atc/rendering.js",
+      "src/layers/atc/selection.js",
+      "src/layers/atc/state.js",
+      "src/app/layers/atc.js",
+      "src/ui/atc.js",
+      "src/ui/atcControls.js"
     ],
     "external": [
       "@mapbox/vector-tile",
@@ -2053,7 +2111,21 @@
       "src/data/gtfsRealtime.js",
       "src/layers/transit/trails.js",
       "src/layers/transit/movement.js",
-      "src/layers/transit/qaMetrics.js"
+      "src/layers/transit/qaMetrics.js",
+      "src/layers/atc/controls.js",
+      "src/layers/atc/directory.js",
+      "src/layers/atc/feedKinds.js",
+      "src/layers/atc/index.js",
+      "src/layers/atc/interaction.js",
+      "src/layers/atc/lifecycle.js",
+      "src/layers/atc/liveatcFeeds.js",
+      "src/layers/atc/playback.js",
+      "src/layers/atc/policy.js",
+      "src/layers/atc/presentation.js",
+      "src/layers/atc/rendering.js",
+      "src/layers/atc/selection.js",
+      "src/layers/atc/state.js",
+      "src/app/layers/atc.js"
     ],
     "external": [
       "cesium",

@@ -25,6 +25,7 @@ const COCKPIT_ENTRY_COLLAPSE_PANEL_IDS = Object.freeze([
   'pp-toggles',
   'global-context-panel',
   'radio-panel',
+  'atc-panel',
 ]);
 
 /** Own panel disclosure, docking, persistence and Cockpit rail restoration. */
@@ -398,7 +399,7 @@ export class PanelChrome {
       ? panelEl
       : null;
     const rightOwnerPanel =
-      panelId === 'radio-panel'
+      panelId === 'radio-panel' || panelId === 'atc-panel'
         ? document.getElementById('global-context-panel')
         : this._rightPanelStack?.contains(panelEl)
           ? panelEl
@@ -459,7 +460,7 @@ export class PanelChrome {
     }
     if (
       !nextCollapsed &&
-      panelId === 'radio-panel' &&
+      (panelId === 'radio-panel' || panelId === 'atc-panel') &&
       document
         .getElementById('global-context-panel')
         ?.classList.contains('collapsed')

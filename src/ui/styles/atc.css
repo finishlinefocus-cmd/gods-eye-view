@@ -1,0 +1,194 @@
+/* ── ATC Radio companion section inside Context (amber sibling of Radio) ── */
+#atc-panel {
+  position: relative;
+  width: 100%;
+  min-height: 0;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 179, 71, 0.16);
+}
+.atc-panel-inner {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid rgba(255, 179, 71, 0.2);
+  border-radius: 8px;
+  background: rgba(20, 12, 2, 0.42);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+#atc-panel .panel-header {
+  margin-bottom: 0;
+}
+.atc-layer-state {
+  color: var(--text-dim);
+  font: 8px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+}
+.atc-layer-state.active {
+  color: #ffd27a;
+}
+.atc-directory-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 6px 8px;
+  align-items: stretch;
+}
+#atc-panel .panel-layer-toggle.active {
+  border-color: #ffb347;
+  color: #fff;
+}
+#atc-stop-btn {
+  min-height: 30px;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 179, 71, 0.3);
+  border-radius: 5px;
+  color: #ffd9a0;
+  background: rgba(96, 60, 10, 0.16);
+  font: 8px/1 var(--font-mono);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+#atc-stop-btn:hover:not(:disabled),
+#atc-stop-btn:focus-visible:not(:disabled) {
+  border-color: #ffb347;
+  color: #fff;
+  outline: none;
+}
+#atc-stop-btn:disabled,
+#atc-nearest-btn:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+.atc-airport-card {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid rgba(255, 179, 71, 0.18);
+  border-radius: 7px;
+  background: rgba(20, 12, 2, 0.48);
+  overflow-wrap: anywhere;
+}
+.atc-airport-card strong {
+  color: #fff3dc;
+  font: 11px/1.25 var(--font-mono);
+  letter-spacing: 0.05em;
+}
+.atc-airport-card span {
+  color: #9a7d55;
+  font: 8px/1.4 var(--font-mono);
+}
+.atc-feed-list {
+  display: grid;
+  gap: 4px;
+  max-height: 240px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 179, 71, 0.46) rgba(255, 255, 255, 0.06);
+}
+.atc-feed-list:empty {
+  display: none;
+}
+.atc-feed {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  gap: 0 8px;
+  align-items: center;
+  padding: 5px 6px;
+  border: 1px solid rgba(255, 179, 71, 0.14);
+  border-radius: 5px;
+  background: rgba(20, 12, 2, 0.32);
+}
+.atc-feed.playing {
+  border-color: #ffb347;
+  background: rgba(96, 60, 10, 0.3);
+}
+.atc-feed-kind {
+  color: #ffb347;
+  font: 7px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.atc-feed-label {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.atc-feed-label strong {
+  overflow: hidden;
+  color: #ffe9c9;
+  font: 9px/1.25 var(--font-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.atc-feed-label span {
+  color: #9a7d55;
+  font: 7px/1.3 var(--font-mono);
+  letter-spacing: 0.04em;
+}
+.atc-feed-offline {
+  margin-left: 6px;
+  padding: 1px 4px;
+  border: 1px solid rgba(255, 157, 143, 0.4);
+  border-radius: 3px;
+  color: #ff9d8f;
+  font: 6px/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.atc-feed-play {
+  min-width: 44px;
+  min-height: 26px;
+  padding: 4px 6px;
+  border: 1px solid rgba(255, 179, 71, 0.3);
+  border-radius: 5px;
+  color: #ffd9a0;
+  background: rgba(96, 60, 10, 0.16);
+  font: 8px/1 var(--font-mono);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.atc-feed-play:hover,
+.atc-feed-play:focus-visible {
+  border-color: #ffb347;
+  color: #fff;
+  outline: none;
+}
+.atc-feed-play.active {
+  color: #fff;
+  background: rgba(255, 179, 71, 0.28);
+}
+.atc-playback-state {
+  min-height: 12px;
+  color: #e0b46e;
+  font: 8px/1.35 var(--font-mono);
+}
+.atc-playback-state.error {
+  color: #ff9d8f;
+}
+.atc-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 5px 10px;
+}
+.atc-links a {
+  color: #d9a45a;
+  font: 7px/1.3 var(--font-mono);
+  letter-spacing: 0.06em;
+  text-decoration: none;
+}
+.atc-links a:hover,
+.atc-links a:focus-visible {
+  color: #fff;
+}
+.atc-privacy {
+  margin: 0;
+  color: rgba(230, 210, 180, 0.48);
+  font: 7px/1.4 var(--font-mono);
+}

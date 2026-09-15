@@ -196,6 +196,13 @@ export const DATA_CREDITS = [
       '(public domain; audio delivered directly by each broadcaster)',
   },
   {
+    key: 'liveatc',
+    html:
+      'Air-traffic-control audio: ' +
+      '<a href="https://www.liveatc.net/" target="_blank" rel="noopener">LiveATC.net</a> ' +
+      '(volunteer feeds; relayed by this server for HTTPS playback, never recorded)',
+  },
+  {
     key: 'reearth-terrain',
     html:
       'Terrain (keyless globe stacks): ' +

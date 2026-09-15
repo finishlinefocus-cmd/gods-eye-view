@@ -10,6 +10,7 @@ import { reassertNavigationHandoff, runExplicitNavigation } from '../navigationP
 import { normalizeRadioCountryInput } from '../data/radioCountry.js';
 import { TR3B_CLASS } from '../data/tr3bRegistry.js';
 import {
+  controlAtc,
   controlCctv,
   controlRadio as runControlRadio,
   createGevActionRunner as createActionRunner,
@@ -1760,6 +1761,75 @@ test('voice CCTV coverage writes the canonical durable coverage mode', async () 
     ['cctv', { coverageMode: 'off' }, { origin: 'voice' }],
     ['cctv', { coverageMode: 'on' }, { origin: 'voice' }],
   ]);
+});
+
+test('voice ATC plays a named airport, tunes nearest from the tracked aircraft, and stops', async () => {
+  let enabled = false;
+  const calls = [];
+  const atc = {
+    async playAirport(query, options) {
+      calls.push(['playAirport', query, options]);
+      return { ok: true, icao: 'KSFO', mount: 'ksfo_twr', kind: options.kind, label: 'KSFO Tower' };
+    },
+    async playNearest(position, options) {
+      calls.push(['playNearest', position, options]);
+      return { ok: true, icao: 'KOAK', mount: 'koak_twr', kind: 'tower', distanceNm: 2.1 };
+    },
+    stopPlayback(options) {
+      calls.push(['stop', options]);
+      return true;
+    },
+  };
+  const flights = { getTrackedInfo: () => ({ latitude: 37.71, longitude: -122.22, altitudeM: 300 }) };
+  const dataManager = {
+    layers: new Map([['atc', { module: atc }], ['flights', { module: flights }]]),
+    isEnabled: (id) => id === 'atc' && enabled,
+    async setEnabled(id, value, options) {
+      calls.push(['enabled', id, value, options]);
+      enabled = value;
+      return true;
+    },
+    getLayerLifecycleState: () => ({ lifecycleState: enabled ? 'enabled' : 'disabled', enabled, uncertain: false }),
+  };
+
+  let result = await controlAtc({}, dataManager, { action: 'play', icao: 'San Francisco' });
+  assert.equal(result.ok, true);
+  assert.equal(result.atcAction, 'play');
+  assert.equal(result.mount, 'ksfo_twr');
+  assert.deepEqual(calls[0], ['enabled', 'atc', true, { origin: 'voice' }]);
+  assert.deepEqual(calls[1], ['playAirport', 'San Francisco', { kind: 'tower', origin: 'voice' }]);
+
+  result = await controlAtc({}, dataManager, { action: 'play', icao: 'KJFK', kind: 'approach' });
+  assert.equal(calls.at(-1)[2].kind, 'approach');
+  assert.equal(calls.filter((call) => call[0] === 'enabled').length, 1, 'an enabled layer is not re-enabled');
+
+  result = await controlAtc({}, dataManager, { action: 'nearest' });
+  assert.equal(result.ok, true);
+  assert.equal(result.icao, 'KOAK');
+  assert.equal(result.positionSource, 'tracked:flights');
+  assert.deepEqual(calls.at(-1)[1], { lat: 37.71, lon: -122.22, altitudeM: 300, source: 'tracked:flights' });
+  assert.deepEqual(calls.at(-1)[2], { kind: null, origin: 'voice' });
+
+  result = await controlAtc({}, dataManager, { action: 'stop' });
+  assert.equal(result.ok, true);
+  assert.equal(result.stopped, true);
+  assert.deepEqual(calls.at(-1), ['stop', { origin: 'voice' }]);
+
+  result = await controlAtc({}, dataManager, { action: 'play' });
+  assert.equal(result.ok, false);
+  assert.match(result.error, /airport code or name/);
+  result = await controlAtc({}, dataManager, { action: 'volume' });
+  assert.equal(result.ok, false);
+  result = await controlAtc({}, { layers: new Map(), isEnabled: () => false }, { action: 'play', icao: 'KSFO' });
+  assert.equal(result.ok, false);
+  assert.match(result.error, /unavailable/);
+  const noPosition = await controlAtc(
+    null,
+    { ...dataManager, layers: new Map([['atc', { module: atc }]]) },
+    { action: 'nearest' },
+  );
+  assert.equal(noPosition.ok, false);
+  assert.match(noPosition.error, /No tracked aircraft/);
 });
 
 test('voice Radio resolves Austin and exposes semantic selection, volume, pause, and stop', async () => {

@@ -21,7 +21,7 @@ test('the complete Realtime tool payload retains its pre-extraction contract and
     .digest('hex');
   assert.equal(
     digest,
-    '956381c3456d3644ed7c9cda72910dc68a34d9191e0b3e414ee200c348245214',
+    'd2e94299994c8be2ddf6fee52e5ad7f59d5caaba15581fb8b06d5bb3251fa880',
   );
 });
 

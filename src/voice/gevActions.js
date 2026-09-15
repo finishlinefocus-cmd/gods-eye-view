@@ -37,6 +37,8 @@ const PANEL_ALIASES = new Map([
   ['radio', 'radio-panel'],
   ['internet radio', 'radio-panel'],
   ['radio stations', 'radio-panel'],
+  ['atc', 'atc-panel'],
+  ['atc radio', 'atc-panel'],
   ['context', 'global-context-panel'],
   ['context panel', 'global-context-panel'],
   ['global context', 'global-context-panel'],
@@ -53,7 +55,7 @@ const PANEL_ALIASES = new Map([
   ['sources', 'control-panel'],
 ]);
 
-const PANEL_IDS = new Set(['data-panel', 'location-bar', 'control-panel', 'cctv-panel', 'radio-panel', 'global-context-panel', 'scene-panel', 'pp-toggles']);
+const PANEL_IDS = new Set(['data-panel', 'location-bar', 'control-panel', 'cctv-panel', 'radio-panel', 'atc-panel', 'global-context-panel', 'scene-panel', 'pp-toggles']);
 const CONTEXT_MODE_ALIASES = new Map([
   ['off', 'off'],
   ['none', 'off'],
@@ -159,6 +161,10 @@ const LAYER_ALIASES = new Map([
   ['radio', 'radio'],
   ['internet radio', 'radio'],
   ['radio stations', 'radio'],
+  ['atc', 'atc'],
+  ['atc radio', 'atc'],
+  ['air traffic control', 'atc'],
+  ['liveatc', 'atc'],
   ['bikeshare', 'bikeshare'],
   ['bikes', 'bikeshare'],
   ['ais', 'ais-live-vessels'],
@@ -884,6 +890,10 @@ export function createGevActionRunner({ viewer, styleManager, dataManager, scene
       return controlRadio(viewer, dataManager, args, { ...runOptions, placeSearch });
     }
 
+    if (name === 'control_atc') {
+      return controlAtc(viewer, dataManager, args, runOptions);
+    }
+
     if (name === 'track_entity') {
       return trackEntity(viewer, dataManager, styleManager, args);
     }
@@ -1252,6 +1262,98 @@ async function resolveRadioLocation(args = {}, coordinates = radioCoordinatePair
   if (!place) return null;
   // Localized provider country labels must not become station country filters.
   return { lat: place.lat, lon: place.lng, label: place.label || query, country: '' };
+}
+
+/**
+ * Voice ATC controls over the ATC Radio layer's public surface.
+ * play: a named airport (code or name), tower by default; nearest: the airport
+ * closest to the tracked aircraft (or the view target), feed chosen from
+ * altitude and distance; stop: silence. play/nearest turn the layer on first.
+ */
+export async function controlAtc(viewer, dataManager, args = {}, options = {}) {
+  const action = String(args.action || '').trim().toLowerCase();
+  const kind = args.kind ? String(args.kind).trim().toLowerCase() : null;
+  const atc = dataManager?.layers?.get('atc')?.module;
+  const lifecycle = () => readLayerLifecycleSummary(dataManager, 'atc');
+  if (!atc) {
+    return { ok: false, action: 'control_atc', error: 'ATC Radio layer unavailable', ...lifecycle() };
+  }
+  if (action === 'stop') {
+    const stopped = atc.stopPlayback?.({ origin: 'voice' });
+    return { ok: true, action: 'control_atc', atcAction: 'stop', stopped: Boolean(stopped), ...lifecycle() };
+  }
+  if (action !== 'play' && action !== 'nearest') {
+    return { ok: false, action: 'control_atc', error: `Unsupported ATC action: ${action || 'missing'}` };
+  }
+  if (options.signal?.aborted) {
+    return { ok: false, action: 'control_atc', error: 'ATC request cancelled' };
+  }
+  if (!dataManager.isEnabled?.('atc')) {
+    const enableOptions = { origin: 'voice' };
+    if (options.signal) enableOptions.signal = options.signal;
+    let enabled = false;
+    try {
+      enabled = await dataManager.setEnabled('atc', true, enableOptions);
+    } catch (error) {
+      return { ok: false, action: 'control_atc', error: `ATC Radio could not be enabled: ${error?.message || error}`, ...lifecycle() };
+    }
+    if (enabled === false) {
+      return { ok: false, action: 'control_atc', error: 'ATC Radio could not be enabled', ...lifecycle() };
+    }
+  }
+  if (options.signal?.aborted) {
+    return { ok: false, action: 'control_atc', error: 'ATC request cancelled' };
+  }
+  let result;
+  if (action === 'play') {
+    const query = String(args.icao || '').trim();
+    if (!query) {
+      return { ok: false, action: 'control_atc', error: 'An airport code or name is required to play ATC' };
+    }
+    result = await atc.playAirport(query, { kind: kind || 'tower', origin: 'voice' });
+  } else {
+    const position = atcNearestPosition(viewer, dataManager);
+    if (!position) {
+      return { ok: false, action: 'control_atc', error: 'No tracked aircraft or view position to search from' };
+    }
+    result = await atc.playNearest(position, { kind, origin: 'voice' });
+    result = { ...result, positionSource: position.source };
+  }
+  return { ...result, action: 'control_atc', atcAction: action, ...lifecycle() };
+}
+
+/** The tracked aircraft's position when one is tracked, else the current view target. */
+function atcNearestPosition(viewer, dataManager) {
+  for (const layerId of ['flights', 'military']) {
+    const module = dataManager?.layers?.get(layerId)?.module;
+    let info = null;
+    try {
+      info = module?.getTrackedInfo?.() || null;
+    } catch {
+      info = null;
+    }
+    if (info && Number.isFinite(info.latitude) && Number.isFinite(info.longitude)) {
+      return {
+        lat: info.latitude,
+        lon: info.longitude,
+        altitudeM: Number.isFinite(info.altitudeM) ? info.altitudeM : undefined,
+        source: `tracked:${layerId}`,
+      };
+    }
+  }
+  if (!viewer?.camera) return null;
+  let target = null;
+  try {
+    target = getViewTargetCartographic(viewer);
+  } catch {
+    target = null;
+  }
+  if (!target) return null;
+  return {
+    lat: Cesium.Math.toDegrees(target.latitude),
+    lon: Cesium.Math.toDegrees(target.longitude),
+    source: 'view',
+  };
 }
 
 /** Voice Radio controls over the Radio layer's public player surface. */

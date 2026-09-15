@@ -131,6 +131,7 @@ const schemas = [
             'traffic',
             'cctv',
             'radio',
+            'atc',
             'bikeshare',
             'ais-live-vessels',
             'local-datacenters',
@@ -163,6 +164,7 @@ const schemas = [
             'traffic',
             'cctv',
             'radio',
+            'atc',
             'bikeshare',
             'ais-live-vessels',
             'local-datacenters',
@@ -189,6 +191,7 @@ const schemas = [
             'control-panel',
             'cctv-panel',
             'radio-panel',
+            'atc-panel',
             'scene-panel',
             'pp-toggles',
             'global-context-panel',
@@ -515,6 +518,35 @@ const schemas = [
         stationQuery: {
           type: 'string',
           maxLength: 120,
+        },
+      },
+      required: ['action'],
+    },
+  },
+  {
+    name: 'control_atc',
+    parameters: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        action: {
+          type: 'string',
+          enum: ['play', 'stop', 'nearest'],
+        },
+        icao: {
+          type: 'string',
+          maxLength: 80,
+        },
+        kind: {
+          type: 'string',
+          enum: [
+            'tower',
+            'ground',
+            'clearance',
+            'approach',
+            'departure',
+            'center',
+          ],
         },
       },
       required: ['action'],

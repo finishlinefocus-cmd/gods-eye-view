@@ -12,6 +12,7 @@ import { weatherEffectsProxy } from './regional/weather-effects.js';
 import { cctvProxy } from './cctv.js';
 import { defaultSourceRoot } from './common/source-root.js';
 import { radioBrowserProxy } from './radio.js';
+import { atcProxy } from './atc.js';
 import { gbfsProxy } from './gbfs.js';
 import { transitProxy } from './transit.js';
 import { adsbLolProxy } from './aircraft/adsb-lol.js';
@@ -38,6 +39,7 @@ function localProviderPlugins() {
     weatherEffectsProxy(),
     cctvProxy({ sourceRoot: defaultSourceRoot }),
     radioBrowserProxy(),
+    atcProxy(),
     gbfsProxy(),
     transitProxy(),
     adsbLolProxy(),

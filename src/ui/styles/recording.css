@@ -13,6 +13,7 @@ body.recording-mode #location-bar,
 body.recording-mode #data-panel,
 body.recording-mode #cctv-panel,
 body.recording-mode #radio-panel,
+body.recording-mode #atc-panel,
 body.recording-mode #global-context-panel,
 body.recording-mode #gev-voice-control,
 body.recording-mode #scene-panel {

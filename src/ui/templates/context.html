@@ -140,6 +140,31 @@
             <p class="radio-privacy">Audio connects directly to the broadcaster after you press play. Your IP is visible to that broadcaster.</p>
           </div>
         </section>
+        <section id="atc-panel" class="panel-collapsible collapsed" data-panel-id="atc-panel" aria-label="Air traffic control radio companion">
+          <div class="atc-panel-inner">
+            <div class="panel-header">
+              <span class="panel-title">ATC RADIO</span>
+              <span id="atc-layer-state" class="atc-layer-state">OFF</span>
+              <span class="panel-divider"></span>
+              <button class="panel-collapse-btn" data-collapse-target="atc-panel" title="Expand ATC Radio" aria-label="Expand ATC Radio section">+</button>
+            </div>
+            <div class="atc-directory-row">
+              <button id="atc-enable-btn" class="panel-layer-toggle" type="button" aria-pressed="false">ENABLE</button>
+              <button id="atc-nearest-btn" class="panel-layer-toggle" type="button" title="Tune the airport nearest the tracked aircraft" disabled>NEAREST ATC</button>
+              <button id="atc-stop-btn" type="button" aria-label="Stop ATC playback" disabled>STOP</button>
+            </div>
+            <div id="atc-airport-card" class="atc-airport-card" aria-live="polite">
+              <strong id="atc-airport-name">NO AIRPORT SELECTED</strong>
+              <span id="atc-airport-meta">Enable ATC Radio, then choose an airport marker or use NEAREST ATC while tracking an aircraft.</span>
+            </div>
+            <ul id="atc-feed-list" class="atc-feed-list" aria-label="LiveATC feeds"></ul>
+            <div id="atc-playback-state" class="atc-playback-state" role="status" aria-live="polite">ATC Radio off</div>
+            <div class="atc-links">
+              <a href="https://www.liveatc.net/" target="_blank" rel="noopener noreferrer">FEEDS: LIVEATC.NET</a>
+            </div>
+            <p class="atc-privacy">Audio is relayed through this server so it can play over HTTPS; nothing is recorded. LiveATC feeds are volunteer-run and may be offline.</p>
+          </div>
+        </section>
       </div>
     </div>
   </aside>

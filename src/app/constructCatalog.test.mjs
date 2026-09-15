@@ -38,7 +38,8 @@ test('catalogs construct distinct layers and classification from their supplied 
     signal: b.signal,
     surface: fixtureSurface(b.signal),
   });
-  assert.equal(first.layers.length, 19);
+  assert.equal(first.layers.length, 20);
+  assert.equal(first.get('atc')?.name, 'ATC Radio');
   assert.deepEqual(
     first.layers.map(({ id }) => id),
     second.layers.map(({ id }) => id),
