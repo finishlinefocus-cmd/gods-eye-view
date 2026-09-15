@@ -82,3 +82,15 @@
 .gev-voice-cost-value[hidden] {
   display: none;
 }
+
+/* LOCAL toggle: same chip as the tier button, tinted when the local
+   (Whisper + Ollama) backend owns the mic. */
+.gev-voice-local-btn[hidden] {
+  display: none;
+}
+
+.gev-voice-local-btn[aria-pressed='true'] {
+  color: #7ef7c1;
+  border-color: rgba(126, 247, 193, 0.6);
+  background: rgba(126, 247, 193, 0.12);
+}

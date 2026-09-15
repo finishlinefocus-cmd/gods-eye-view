@@ -12,6 +12,7 @@ export function createVoiceCommands({
   signal,
   debugSink,
   createControl = createVoiceControl,
+  attachLocalVoice = null,
 }) {
   window.__gevVoiceCommands?.stop?.({ removeUi: true });
   const ui = createControl({ reset: true });
@@ -59,7 +60,24 @@ export function createVoiceCommands({
   const annotationUnsubscribe = annotations?.onOutlineEvent?.((event) => {
     session.sendMapEvent({ type: 'map_annotation_outline', ...event });
   });
+  // Optional local push-to-talk backend (see localVoiceControl.js). It owns
+  // the mic button only while its LOCAL mode is on.
+  let localVoice = null;
+  if (typeof attachLocalVoice === 'function') {
+    try {
+      localVoice = attachLocalVoice({
+        ui,
+        runner,
+        session,
+        signal: session.signal,
+      });
+    } catch {
+      localVoice = null;
+    }
+  }
+  if (localVoice) controls.localVoice = localVoice;
   const buttonHandler = () => {
+    if (localVoice?.handlesButton?.()) return;
     if (adapter.ignoreButtonClick?.()) return;
     if (session.isActive()) session.stop();
     else void session.start({ pushToTalk: false });
