@@ -50,6 +50,62 @@ export function pickRecorderMimeType(MediaRecorderImpl) {
   return '';
 }
 
+
+/**
+ * Minimal recorder for browsers without MediaRecorder (iOS Safari < 14.3):
+ * Web Audio ScriptProcessor -> 16 kHz mono PCM -> WAV Blob. Same interface subset
+ * the pipeline uses: start(), stop(), ondataavailable/onstop, state, mimeType.
+ */
+export function createWavRecorder(stream, AudioContextImpl = globalThis.AudioContext || globalThis.webkitAudioContext) {
+  if (typeof AudioContextImpl !== 'function') return null;
+  const ctx = new AudioContextImpl();
+  const source = ctx.createMediaStreamSource(stream);
+  const proc = ctx.createScriptProcessor(4096, 1, 1);
+  const buffers = [];
+  const rec = { state: 'inactive', mimeType: 'audio/wav', ondataavailable: null, onstop: null };
+  proc.onaudioprocess = (e) => {
+    if (rec.state !== 'recording') return;
+    buffers.push(new Float32Array(e.inputBuffer.getChannelData(0)));
+  };
+  rec.start = () => {
+    rec.state = 'recording';
+    source.connect(proc);
+    proc.connect(ctx.destination);
+    if (ctx.state === 'suspended') ctx.resume?.();
+  };
+  rec.stop = () => {
+    rec.state = 'inactive';
+    try { source.disconnect(); proc.disconnect(); } catch { /* ignore */ }
+    const inRate = ctx.sampleRate || 48000;
+    const total = buffers.reduce((n, b) => n + b.length, 0);
+    const mono = new Float32Array(total);
+    let off = 0;
+    for (const b of buffers) { mono.set(b, off); off += b.length; }
+    // downsample to 16 kHz for Whisper
+    const outRate = 16000;
+    const ratio = inRate / outRate;
+    const outLen = Math.floor(mono.length / ratio);
+    const pcm = new Int16Array(outLen);
+    for (let i = 0; i < outLen; i++) {
+      const v = Math.max(-1, Math.min(1, mono[Math.floor(i * ratio)] || 0));
+      pcm[i] = v < 0 ? v * 0x8000 : v * 0x7fff;
+    }
+    const wav = new ArrayBuffer(44 + pcm.length * 2);
+    const dv = new DataView(wav);
+    const str = (o, t) => { for (let i = 0; i < t.length; i++) dv.setUint8(o + i, t.charCodeAt(i)); };
+    str(0, 'RIFF'); dv.setUint32(4, 36 + pcm.length * 2, true); str(8, 'WAVE'); str(12, 'fmt ');
+    dv.setUint32(16, 16, true); dv.setUint16(20, 1, true); dv.setUint16(22, 1, true);
+    dv.setUint32(24, outRate, true); dv.setUint32(28, outRate * 2, true); dv.setUint16(32, 2, true);
+    dv.setUint16(34, 16, true); str(36, 'data'); dv.setUint32(40, pcm.length * 2, true);
+    new Int16Array(wav, 44).set(pcm);
+    const blob = new Blob([wav], { type: 'audio/wav' });
+    try { ctx.close?.(); } catch { /* ignore */ }
+    rec.ondataavailable?.({ data: blob });
+    rec.onstop?.();
+  };
+  return rec;
+}
+
 /** Keep only the most recent `turns` user/assistant pairs. */
 export function trimHistory(history, turns = LOCAL_VOICE_HISTORY_TURNS) {
   const limit = Math.max(0, turns) * 2;
@@ -361,8 +417,10 @@ export function createLocalVoice({
 
   async function startRecording() {
     if (disposed || busy || recorder) return false;
-    if (!mediaDevices?.getUserMedia || typeof MediaRecorderImpl !== 'function') {
-      status('error', 'local voice: microphone recording is not supported in this browser');
+    const hasMediaRecorder = typeof MediaRecorderImpl === 'function';
+    const hasAudioContext = typeof (globalThis.AudioContext || globalThis.webkitAudioContext) === 'function';
+    if (!mediaDevices?.getUserMedia || (!hasMediaRecorder && !hasAudioContext)) {
+      status('error', 'local voice: microphone recording is not supported in this browser (needs HTTPS and a modern Safari/Chrome)');
       return false;
     }
     try {
@@ -371,9 +429,14 @@ export function createLocalVoice({
       status('error', `local voice: microphone permission denied (${error?.message || error})`);
       return false;
     }
-    const mimeType = pickRecorderMimeType(MediaRecorderImpl);
+    const mimeType = hasMediaRecorder ? pickRecorderMimeType(MediaRecorderImpl) : '';
     try {
-      recorder = mimeType ? new MediaRecorderImpl(stream, { mimeType }) : new MediaRecorderImpl(stream);
+      if (hasMediaRecorder) {
+        recorder = mimeType ? new MediaRecorderImpl(stream, { mimeType }) : new MediaRecorderImpl(stream);
+      } else {
+        recorder = createWavRecorder(stream);
+        if (!recorder) throw new Error('no AudioContext');
+      }
     } catch (error) {
       releaseStream();
       status('error', `local voice: recorder failed (${error?.message || error})`);
