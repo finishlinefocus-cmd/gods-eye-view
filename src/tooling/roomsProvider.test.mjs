@@ -3,7 +3,9 @@ import test from 'node:test';
 import http from 'node:http';
 import { createRequire } from 'node:module';
 import {
+  allowedOriginsFromEnv,
   attachRoomsSocket,
+  corsHeaders,
   createRoomStore,
   createRoomsMiddleware,
   originAllowed,
@@ -623,4 +625,122 @@ test('WebSocket transport: hello/presence/state/chat/lead round trip and expiry 
     store.clear();
     await new Promise((resolve) => server.close(resolve));
   }
+});
+
+test('CORS: allowed cross-origin instances get echoed origins and a 204 preflight; others get nothing', async () => {
+  const { store } = makeStore();
+  const allowedOrigins = [
+    'https://mac.tail1234.ts.net',
+    'http://jetson.local:4173',
+  ];
+  assert.deepEqual(
+    allowedOriginsFromEnv({
+      GEV_ROOMS_ALLOWED_ORIGINS:
+        ' https://mac.tail1234.ts.net, http://jetson.local:4173 ,',
+    }),
+    allowedOrigins,
+  );
+  assert.equal(
+    corsHeaders({ host: 'pi.local:4173' }),
+    null,
+    'no Origin → no CORS headers',
+  );
+  assert.equal(
+    corsHeaders(
+      { host: 'pi.local:4173', origin: 'https://evil.example' },
+      { allowedOrigins },
+    ),
+    null,
+  );
+  assert.equal(
+    corsHeaders(
+      { host: 'pi.local:4173', origin: 'https://mac.tail1234.ts.net' },
+      { allowedOrigins },
+    )['Access-Control-Allow-Origin'],
+    'https://mac.tail1234.ts.net',
+  );
+  assert.equal(
+    corsHeaders({ host: 'pi.local:4173', origin: 'http://pi.local:4173' })[
+      'Access-Control-Allow-Origin'
+    ],
+    'http://pi.local:4173',
+    'same host always allowed',
+  );
+
+  const middleware = createRoomsMiddleware(store, {
+    createLimiter: () => true,
+    allowedOrigins,
+  });
+  const run = (method, url, headers = {}) =>
+    new Promise((resolve) => {
+      const res = {
+        headersSent: false,
+        writeHead(status, h) {
+          this.status = status;
+          this.headers = h;
+          this.headersSent = true;
+        },
+        end(body) {
+          resolve({
+            status: this.status,
+            headers: this.headers,
+            body: body ? JSON.parse(body) : null,
+          });
+        },
+      };
+      middleware(
+        {
+          method,
+          url,
+          headers: { host: 'pi.local:4173', ...headers },
+          socket: { remoteAddress: '10.0.0.2' },
+        },
+        res,
+        () => resolve({ status: 'next' }),
+      );
+    });
+
+  const preflight = await run('OPTIONS', '/', {
+    origin: 'https://mac.tail1234.ts.net',
+    'access-control-request-method': 'POST',
+  });
+  assert.equal(preflight.status, 204);
+  assert.equal(
+    preflight.headers['Access-Control-Allow-Origin'],
+    'https://mac.tail1234.ts.net',
+  );
+  assert.match(preflight.headers['Access-Control-Allow-Methods'], /POST/);
+  assert.equal(preflight.headers.Vary, 'Origin');
+  assert.equal(
+    (await run('OPTIONS', '/', { origin: 'https://evil.example' })).status,
+    403,
+  );
+
+  const created = await run('POST', '/', {
+    origin: 'http://jetson.local:4173',
+  });
+  assert.equal(created.status, 201);
+  assert.equal(
+    created.headers['Access-Control-Allow-Origin'],
+    'http://jetson.local:4173',
+  );
+  const summary = await run('GET', `/${created.body.roomId}`, {
+    origin: 'https://mac.tail1234.ts.net',
+  });
+  assert.equal(summary.status, 200);
+  assert.equal(
+    summary.headers['Access-Control-Allow-Origin'],
+    'https://mac.tail1234.ts.net',
+  );
+  const refused = await run('GET', `/${created.body.roomId}`, {
+    origin: 'https://evil.example',
+  });
+  assert.equal(
+    refused.status,
+    200,
+    'the route still answers; the browser enforces the missing header',
+  );
+  assert.equal(refused.headers['Access-Control-Allow-Origin'], undefined);
+  const plain = await run('GET', `/${created.body.roomId}`);
+  assert.equal(plain.headers['Access-Control-Allow-Origin'], undefined);
 });

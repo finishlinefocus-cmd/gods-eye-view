@@ -210,15 +210,8 @@ export function sanitizePing(ping) {
   };
 }
 
-/** Build the socket URL for a room from a page location. */
-export function roomSocketUrl(location, roomId, { name, token } = {}) {
-  const secure = location.protocol === 'https:';
-  const params = new URLSearchParams();
-  if (name) params.set('name', name);
-  if (token) params.set('token', token);
-  const query = params.toString();
-  return `${secure ? 'wss' : 'ws'}://${location.host}/api/rooms/${roomId}/ws${query ? `?${query}` : ''}`;
-}
+/** Socket URL lives with the base-URL policy; re-exported for existing callers. */
+export { roomSocketUrl } from './baseUrl.js';
 
 /** Build the shareable join link. */
 export function roomJoinLink(origin, roomId) {

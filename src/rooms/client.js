@@ -1,4 +1,4 @@
-import { roomSocketUrl } from './protocol.js';
+import { roomSocketUrl } from './baseUrl.js';
 
 /**
  * Room socket with reconnect. Emits every server message by its `type` plus a
@@ -23,6 +23,7 @@ export class RoomClient {
     roomId,
     name,
     token = null,
+    baseUrl = '',
     location = globalThis.location,
     WebSocketImpl = globalThis.WebSocket,
     setTimer = (fn, ms) => setTimeout(fn, ms),
@@ -34,7 +35,8 @@ export class RoomClient {
     this.roomId = roomId;
     this.name = name;
     this.token = token;
-    this.url = roomSocketUrl(location, roomId, { name, token });
+    this.baseUrl = baseUrl;
+    this.url = roomSocketUrl(location, roomId, { name, token, baseUrl });
     this._WebSocket = WebSocketImpl;
     this._setTimer = setTimer;
     this._clearTimer = clearTimer;

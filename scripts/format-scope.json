@@ -759,5 +759,7 @@
   "src/tooling/roomsProvider.test.mjs",
   "src/ui/rooms.js",
   "src/ui/roomControls.js",
-  "src/ui/styles/rooms.css"
+  "src/ui/styles/rooms.css",
+  "src/rooms/baseUrl.js",
+  "src/rooms/baseUrl.test.mjs"
 ]

@@ -208,7 +208,8 @@
       "server/providers/rooms/store.js",
       "server/providers/rooms/transport.js",
       "server/providers/common/rate-limit.js",
-      "src/rooms/protocol.js"
+      "src/rooms/protocol.js",
+      "src/rooms/baseUrl.js"
     ],
     "external": []
   },
@@ -437,6 +438,7 @@
       "src/ui/rooms.js",
       "src/ui/roomControls.js",
       "src/rooms/session.js",
+      "src/rooms/baseUrl.js",
       "src/rooms/client.js",
       "src/rooms/follow.js",
       "src/rooms/protocol.js"
@@ -447,6 +449,7 @@
     "exports": ["./rooms"],
     "modules": [
       "src/rooms/session.js",
+      "src/rooms/baseUrl.js",
       "src/rooms/client.js",
       "src/rooms/follow.js",
       "src/rooms/protocol.js"
@@ -1767,6 +1770,7 @@
       "src/ui/atc.js",
       "src/ui/atcControls.js",
       "src/rooms/protocol.js",
+      "src/rooms/baseUrl.js",
       "src/rooms/client.js",
       "src/rooms/follow.js",
       "src/rooms/session.js",

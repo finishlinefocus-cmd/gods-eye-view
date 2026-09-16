@@ -1,7 +1,9 @@
 import { ROOM_LIMITS } from '../../src/rooms/protocol.js';
 import { createRoomStore } from './rooms/store.js';
 import {
+  allowedOriginsFromEnv,
   attachRoomsSocket,
+  corsHeaders,
   createRoomsMiddleware,
   originAllowed,
   parseRoomPath,
@@ -9,7 +11,9 @@ import {
 
 export { createRoomStore, RoomError } from './rooms/store.js';
 export {
+  allowedOriginsFromEnv,
   attachRoomsSocket,
+  corsHeaders,
   createRoomsMiddleware,
   originAllowed,
   parseRoomPath,
@@ -33,7 +37,7 @@ export function roomsProvider(options = {}) {
     detach();
     store?.clear();
     store = createRoomStore({ expiryMs: roomsExpiryMs(), ...options });
-    server.middlewares.use('/api/rooms', createRoomsMiddleware(store));
+    server.middlewares.use('/api/rooms', createRoomsMiddleware(store, options));
     detach = attachRoomsSocket(server.httpServer, store, options);
     if (!server.httpServer) {
       console.warn(

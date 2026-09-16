@@ -1,4 +1,5 @@
 import { RoomClient } from './client.js';
+import { roomsApiUrl } from './baseUrl.js';
 import { FollowController, stateKey } from './follow.js';
 import {
   ROOM_LIMITS,
@@ -51,6 +52,7 @@ function emptyState() {
 export class RoomSession {
   constructor({
     view,
+    baseUrl = '',
     location = globalThis.location,
     storage = globalThis.localStorage,
     fetchImpl = globalThis.fetch?.bind(globalThis),
@@ -62,6 +64,7 @@ export class RoomSession {
     now = () => Date.now(),
   } = {}) {
     this._view = view;
+    this._baseUrl = baseUrl;
     this._location = location;
     this._storage = storage;
     this._fetch = fetchImpl;
@@ -107,6 +110,15 @@ export class RoomSession {
     }
   }
 
+  /** Where the room server lives ('' = this page's origin). */
+  get baseUrl() {
+    return this._baseUrl;
+  }
+
+  apiUrl(path) {
+    return roomsApiUrl(this._baseUrl, path);
+  }
+
   get inRoom() {
     return Boolean(this.state.roomId) && this.state.phase !== 'failed';
   }
@@ -150,7 +162,9 @@ export class RoomSession {
 
   async create(name) {
     if (!this._fetch) throw new Error('fetch unavailable');
-    const response = await this._fetch('/api/rooms', { method: 'POST' });
+    const response = await this._fetch(this.apiUrl('/api/rooms'), {
+      method: 'POST',
+    });
     let body = null;
     try {
       body = await response.json();
@@ -173,7 +187,7 @@ export class RoomSession {
     this.rememberName(displayName);
     if (this.state.roomId) this.leave({ silent: true });
     if (this._fetch) {
-      const probe = await this._fetch(`/api/rooms/${roomId}`);
+      const probe = await this._fetch(this.apiUrl(`/api/rooms/${roomId}`));
       if (probe.status === 404) throw new Error('Room not found or expired');
       if (!probe.ok) throw new Error(`Room unavailable (${probe.status})`);
     }
@@ -193,6 +207,7 @@ export class RoomSession {
       roomId,
       name: displayName,
       token,
+      baseUrl: this._baseUrl,
       location: this._location,
     });
     this._client = client;

@@ -3,6 +3,7 @@ import { initAnnotations } from '../annotations/index.js';
 import { initDrawTool } from '../annotations/drawTool.js';
 import { initGevVoiceCommands } from '../voice/gevRealtime.js';
 import { RoomSession } from '../rooms/session.js';
+import { readRoomsBaseUrl } from '../rooms/baseUrl.js';
 import { createRoomViewAdapter } from '../rooms/viewAdapter.js';
 import { RoomControls } from '../ui/rooms.js';
 import { installScopeMask, destroyScopeMask } from '../scopeMask.js';
@@ -103,7 +104,12 @@ export function createApplicationTools({
     dataManager,
     sceneDirector,
   });
-  const rooms = new RoomSession({ view: roomView });
+  // VITE_ROOMS_BASE_URL / localStorage.gevRoomsBaseUrl point every instance
+  // at the one room server; empty means this origin.
+  const rooms = new RoomSession({
+    view: roomView,
+    baseUrl: readRoomsBaseUrl(),
+  });
   const roomControls = new RoomControls({
     session: rooms,
     toast: (message) => styleManager._showToast?.(message),

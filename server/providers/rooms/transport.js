@@ -35,13 +35,33 @@ function loadWs() {
   return _wsModule;
 }
 
-function sendJson(res, status, body) {
+function sendJson(res, status, body, extraHeaders = {}) {
   if (res.headersSent) return;
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
+    ...extraHeaders,
   });
   res.end(JSON.stringify(body));
+}
+
+/**
+ * CORS headers for the HTTP room routes. The lab's other app instances fetch
+ * `/api/rooms*` cross-origin from the one instance that hosts rooms, so an
+ * allowed Origin (same host, forwarded host, or `GEV_ROOMS_ALLOWED_ORIGINS`)
+ * is echoed back; anything else gets no CORS headers and the browser blocks
+ * it. Requests without an Origin (same-origin fetch, curl) get nothing extra.
+ */
+export function corsHeaders(headers, { allowedOrigins = [] } = {}) {
+  const origin = headers.origin;
+  if (!origin || !originAllowed(headers, { allowedOrigins })) return null;
+  return {
+    'Access-Control-Allow-Origin': origin,
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age': '600',
+    Vary: 'Origin',
+  };
 }
 
 function errorStatus(error) {
@@ -81,7 +101,7 @@ export function originAllowed(headers, { allowedOrigins = [] } = {}) {
   );
 }
 
-function allowedOriginsFromEnv(env = process.env) {
+export function allowedOriginsFromEnv(env = process.env) {
   return String(env.GEV_ROOMS_ALLOWED_ORIGINS || '')
     .split(',')
     .map((value) => value.trim())
@@ -89,30 +109,44 @@ function allowedOriginsFromEnv(env = process.env) {
 }
 
 /** connect-style middleware for `/api/rooms`. */
-export function createRoomsMiddleware(store, { createLimiter } = {}) {
+export function createRoomsMiddleware(
+  store,
+  { createLimiter, allowedOrigins = allowedOriginsFromEnv() } = {},
+) {
   const allowCreate =
     createLimiter || makeRateLimiter({ windowMs: 60_000, max: 12 });
   return function roomsMiddleware(req, res, next) {
     const url = new URL(req.url || '/', 'http://localhost');
     const pathname = url.pathname.replace(/\/+$/, '') || '/';
+    const cors = corsHeaders(req.headers || {}, { allowedOrigins });
+    const reply = (status, body) => sendJson(res, status, body, cors || {});
+    if (req.method === 'OPTIONS') {
+      // Preflight from another app instance. Refused origins get no CORS
+      // headers, which the browser treats as a failed preflight.
+      if (!cors) {
+        reply(403, { error: 'Origin not allowed' });
+        return;
+      }
+      res.writeHead(204, cors);
+      res.end();
+      return;
+    }
     try {
       if (pathname === '/') {
         if (req.method === 'POST') {
           if (!allowCreate(clientKey(req))) {
-            sendJson(res, 429, {
-              error: 'Too many rooms created; wait a minute',
-            });
+            reply(429, { error: 'Too many rooms created; wait a minute' });
             return;
           }
-          sendJson(res, 201, store.createRoom());
+          reply(201, store.createRoom());
           return;
         }
-        sendJson(res, 405, { error: 'POST to create a room' });
+        reply(405, { error: 'POST to create a room' });
         return;
       }
       if (WS_PATH.test(`/api/rooms${pathname}`)) {
         // A plain HTTP hit on the socket path: tell the client what it is.
-        sendJson(res, 426, { error: 'WebSocket upgrade required' });
+        reply(426, { error: 'WebSocket upgrade required' });
         return;
       }
       const roomId = parseRoomPath(pathname);
@@ -121,12 +155,12 @@ export function createRoomsMiddleware(store, { createLimiter } = {}) {
         return;
       }
       if (req.method !== 'GET' && req.method !== 'HEAD') {
-        sendJson(res, 405, { error: 'GET only' });
+        reply(405, { error: 'GET only' });
         return;
       }
-      sendJson(res, 200, store.summary(roomId));
+      reply(200, store.summary(roomId));
     } catch (error) {
-      sendJson(res, errorStatus(error), {
+      reply(errorStatus(error), {
         error: error?.message || 'Room error',
         code: error?.code || 'ROOM_ERROR',
       });
