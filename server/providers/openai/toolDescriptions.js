@@ -342,6 +342,29 @@ export const ACTION_DESCRIPTIONS = {
       },
     },
   },
+  control_room: {
+    description:
+      'Shared live session ("room") with other people: create starts a room and copies nothing—read the code back; join enters a room by code; leave exits; take_lead makes this view the one others follow; follow/unfollow toggle following the leader; share_moment posts the current view (with an optional note) for others to jump to; ping drops a 20-second marker at the current target for everyone; status reports who is in the room and who leads. Examples: "create a room" → create; "join room ABC234" → join code=ABC234; "share this with the room" → share_moment; "follow the leader" → follow; "take the lead" → take_lead.',
+    $position: 1,
+    parameters: {
+      properties: {
+        action: {
+          description:
+            'create, join, leave, take_lead, follow, unfollow, share_moment, ping or status.',
+          $position: 2,
+        },
+        code: {
+          description:
+            'Room code for join: six letters/digits as spoken ("A B C 2 3 4" → ABC234). Ignored otherwise.',
+          $position: 2,
+        },
+        note: {
+          description: 'Optional note attached to share_moment or ping.',
+          $position: 2,
+        },
+      },
+    },
+  },
   track_entity: {
     description:
       'Find and follow a specific aircraft (callsign/ICAO hex), ship (name/MMSI), or satellite (name/NORAD id) on enabled layers. Camera follows the entity.',

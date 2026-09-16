@@ -553,6 +553,38 @@ const schemas = [
     },
   },
   {
+    name: 'control_room',
+    parameters: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        action: {
+          type: 'string',
+          enum: [
+            'create',
+            'join',
+            'leave',
+            'take_lead',
+            'follow',
+            'unfollow',
+            'share_moment',
+            'ping',
+            'status',
+          ],
+        },
+        code: {
+          type: 'string',
+          maxLength: 120,
+        },
+        note: {
+          type: 'string',
+          maxLength: 280,
+        },
+      },
+      required: ['action'],
+    },
+  },
+  {
     name: 'track_entity',
     parameters: {
       type: 'object',

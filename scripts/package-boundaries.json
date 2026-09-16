@@ -200,6 +200,18 @@
     ],
     "external": []
   },
+  "rooms-provider": {
+    "runtime": "node",
+    "exports": ["./server/providers/rooms"],
+    "modules": [
+      "server/providers/rooms.js",
+      "server/providers/rooms/store.js",
+      "server/providers/rooms/transport.js",
+      "server/providers/common/rate-limit.js",
+      "src/rooms/protocol.js"
+    ],
+    "external": []
+  },
   "overpass-provider": {
     "runtime": "node",
     "exports": ["./server/providers/overpass"],
@@ -419,6 +431,28 @@
     "modules": ["src/ui/atc.js", "src/ui/atcControls.js"],
     "external": []
   },
+  "rooms-controls": {
+    "exports": ["./ui/rooms"],
+    "modules": [
+      "src/ui/rooms.js",
+      "src/ui/roomControls.js",
+      "src/rooms/session.js",
+      "src/rooms/client.js",
+      "src/rooms/follow.js",
+      "src/rooms/protocol.js"
+    ],
+    "external": []
+  },
+  "rooms-session": {
+    "exports": ["./rooms"],
+    "modules": [
+      "src/rooms/session.js",
+      "src/rooms/client.js",
+      "src/rooms/follow.js",
+      "src/rooms/protocol.js"
+    ],
+    "external": []
+  },
   "cctv-controls": {
     "exports": ["./ui/cctv"],
     "modules": [
@@ -618,7 +652,8 @@
       "src/ui/styles/voice-cost.css",
       "src/ui/styles/first-run.css",
       "src/ui/styles/provider-settings.css",
-      "src/ui/styles/atc.css"
+      "src/ui/styles/atc.css",
+      "src/ui/styles/rooms.css"
     ],
     "external": []
   },
@@ -1730,7 +1765,14 @@
       "src/layers/atc/state.js",
       "src/app/layers/atc.js",
       "src/ui/atc.js",
-      "src/ui/atcControls.js"
+      "src/ui/atcControls.js",
+      "src/rooms/protocol.js",
+      "src/rooms/client.js",
+      "src/rooms/follow.js",
+      "src/rooms/session.js",
+      "src/rooms/viewAdapter.js",
+      "src/ui/rooms.js",
+      "src/ui/roomControls.js"
     ],
     "external": [
       "@mapbox/vector-tile",

@@ -269,7 +269,7 @@ const BASEMAP_CONTEXT_WAIT_MS = 1500;
 const viewTargetCache = new WeakMap();
 
 /** Create application actions over the supplied scene and services. */
-export function createGevActionRunner({ viewer, styleManager, dataManager, sceneDirector = null, annotations = null, placeSearch = unavailablePlaceSearch, floorServices = defaultFloorServices, annotationResolver = defaultAnnotationResolver, searchNavigation = searchAndFlyTo }) {
+export function createGevActionRunner({ viewer, styleManager, dataManager, sceneDirector = null, annotations = null, rooms = null, placeSearch = unavailablePlaceSearch, floorServices = defaultFloorServices, annotationResolver = defaultAnnotationResolver, searchNavigation = searchAndFlyTo }) {
   // Voice enable times and analyst follow-up memory belong to this runner.
   const _layerEnabledAt = new Map();
   let analystEngine;
@@ -894,6 +894,10 @@ export function createGevActionRunner({ viewer, styleManager, dataManager, scene
       return controlAtc(viewer, dataManager, args, runOptions);
     }
 
+    if (name === 'control_room') {
+      return controlRoom(rooms, args);
+    }
+
     if (name === 'track_entity') {
       return trackEntity(viewer, dataManager, styleManager, args);
     }
@@ -1320,6 +1324,92 @@ export async function controlAtc(viewer, dataManager, args = {}, options = {}) {
     result = { ...result, positionSource: position.source };
   }
   return { ...result, action: 'control_atc', atcAction: action, ...lifecycle() };
+}
+
+/** Spoken room codes arrive as "A B C 2 3 4" or "abc-234"; squash to the six characters. */
+export function spokenRoomCode(value) {
+  return String(value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+}
+
+/** Voice room controls over the RoomSession's public surface (`src/rooms/session.js`). */
+export async function controlRoom(rooms, args = {}) {
+  const action = String(args.action || '').trim().toLowerCase();
+  const fail = (error) => ({ ok: false, action: 'control_room', roomAction: action, error });
+  if (!rooms) return fail('Rooms are unavailable in this session');
+  const snapshot = () => {
+    const state = rooms.state || {};
+    const leader = (state.members || []).find((m) => m.id === state.leaderId);
+    return {
+      roomId: state.roomId || null,
+      inRoom: Boolean(state.roomId) && state.phase !== 'failed',
+      connection: state.connection || 'idle',
+      memberCount: (state.members || []).length,
+      members: (state.members || []).map((m) => m.name),
+      leader: leader ? leader.name : null,
+      isLeader: Boolean(rooms.isLeader),
+      following: Boolean(state.following),
+      followingPaused: Boolean(state.overridden),
+      moments: (state.moments || []).length,
+      joinLink: rooms.joinLink || null,
+    };
+  };
+  const ok = (extra = {}) => ({ ok: true, action: 'control_room', roomAction: action, ...extra, ...snapshot() });
+  const requireRoom = () => (snapshot().inRoom ? null : fail('Not in a room — say "create a room" or "join room <code>" first'));
+  try {
+    switch (action) {
+      case 'create': {
+        const roomId = await rooms.create(args.name || rooms.rememberedName);
+        return ok({ roomId, spokenCode: roomId.split('').join(' ') });
+      }
+      case 'join': {
+        const code = spokenRoomCode(args.code);
+        if (code.length !== 6) return fail('A six-character room code is required to join');
+        const roomId = await rooms.join(code, args.name || rooms.rememberedName);
+        return ok({ roomId });
+      }
+      case 'leave': {
+        const wasIn = snapshot().inRoom;
+        rooms.leave();
+        return ok({ left: wasIn });
+      }
+      case 'take_lead': {
+        const missing = requireRoom();
+        if (missing) return missing;
+        return ok({ requested: rooms.takeLead() });
+      }
+      case 'follow': {
+        const missing = requireRoom();
+        if (missing) return missing;
+        if (rooms.isLeader) return fail('You are the leader — hand off or let someone take the lead first');
+        rooms.rejoinLeader();
+        return ok();
+      }
+      case 'unfollow': {
+        const missing = requireRoom();
+        if (missing) return missing;
+        rooms.setFollowing(false);
+        return ok();
+      }
+      case 'share_moment': {
+        const missing = requireRoom();
+        if (missing) return missing;
+        const shared = rooms.shareMoment(String(args.note || ''));
+        return shared ? ok({ shared: true }) : fail('Could not share this view right now');
+      }
+      case 'ping': {
+        const missing = requireRoom();
+        if (missing) return missing;
+        const pinged = rooms.pingHere(String(args.note || ''));
+        return pinged ? ok({ pinged: true }) : fail('Nothing to ping under the current view');
+      }
+      case 'status':
+        return ok();
+      default:
+        return fail(`Unsupported room action: ${action || 'missing'}`);
+    }
+  } catch (error) {
+    return fail(error?.message || String(error));
+  }
 }
 
 /** The tracked aircraft's position when one is tracked, else the current view target. */

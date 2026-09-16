@@ -11,6 +11,8 @@ import { normalizeRadioCountryInput } from '../data/radioCountry.js';
 import { TR3B_CLASS } from '../data/tr3bRegistry.js';
 import {
   controlAtc,
+  controlRoom,
+  spokenRoomCode,
   controlCctv,
   controlRadio as runControlRadio,
   createGevActionRunner as createActionRunner,
@@ -3251,4 +3253,146 @@ test('ISS voice lookup uses the registered satellite instance', async () => {
   const result = await runner('next_iss_pass', { latitude: 30, longitude: -97, minElevationDeg: 15 });
   assert.deepEqual(calls, [{ latDeg: 30, lonDeg: -97, minElevDeg: 15 }]);
   assert.match(result.error, /No ISS pass above 15/);
+});
+
+test('voice rooms: create/join/leave/lead/follow/share/ping/status over the RoomSession surface', async () => {
+  const calls = [];
+  const state = {
+    roomId: null,
+    phase: 'idle',
+    connection: 'idle',
+    memberId: 'me',
+    members: [],
+    leaderId: null,
+    following: true,
+    overridden: false,
+    moments: [],
+  };
+  const rooms = {
+    state,
+    rememberedName: 'Alice',
+    get isLeader() {
+      return state.leaderId === 'me';
+    },
+    get joinLink() {
+      return state.roomId ? `https://gev.example/?room=${state.roomId}` : null;
+    },
+    async create(name) {
+      calls.push(['create', name]);
+      Object.assign(state, {
+        roomId: 'ABC234',
+        phase: 'joined',
+        connection: 'open',
+        leaderId: 'me',
+        members: [{ id: 'me', name: 'Alice' }],
+      });
+      return 'ABC234';
+    },
+    async join(code, name) {
+      calls.push(['join', code, name]);
+      if (code === 'ZZZZZZ') throw new Error('Room not found or expired');
+      Object.assign(state, {
+        roomId: code,
+        phase: 'joined',
+        connection: 'open',
+        leaderId: 'other',
+        members: [{ id: 'other', name: 'Bob' }, { id: 'me', name: 'Alice' }],
+      });
+      return code;
+    },
+    leave() {
+      calls.push(['leave']);
+      Object.assign(state, { roomId: null, phase: 'idle', leaderId: null, members: [] });
+    },
+    takeLead() {
+      calls.push(['takeLead']);
+      return true;
+    },
+    rejoinLeader() {
+      calls.push(['rejoinLeader']);
+      state.overridden = false;
+    },
+    setFollowing(value) {
+      calls.push(['setFollowing', value]);
+      state.following = value;
+    },
+    shareMoment(note) {
+      calls.push(['shareMoment', note]);
+      return true;
+    },
+    pingHere(label) {
+      calls.push(['pingHere', label]);
+      return true;
+    },
+  };
+
+  assert.equal(spokenRoomCode('a b c 2 3 4'), 'ABC234');
+  assert.equal(spokenRoomCode('abc-234'), 'ABC234');
+
+  // Without a room, everything but create/join/status/leave explains itself.
+  let result = await controlRoom(rooms, { action: 'take_lead' });
+  assert.equal(result.ok, false);
+  assert.match(result.error, /Not in a room/);
+  result = await controlRoom(null, { action: 'status' });
+  assert.match(result.error, /unavailable/);
+  result = await controlRoom(rooms, { action: 'status' });
+  assert.equal(result.ok, true);
+  assert.equal(result.inRoom, false);
+
+  result = await controlRoom(rooms, { action: 'create' });
+  assert.equal(result.ok, true);
+  assert.equal(result.roomId, 'ABC234');
+  assert.equal(result.spokenCode, 'A B C 2 3 4');
+  assert.equal(result.isLeader, true);
+  assert.equal(result.joinLink, 'https://gev.example/?room=ABC234');
+  assert.deepEqual(calls.at(-1), ['create', 'Alice']);
+
+  result = await controlRoom(rooms, { action: 'share_moment', note: 'look at this' });
+  assert.equal(result.ok, true);
+  assert.deepEqual(calls.at(-1), ['shareMoment', 'look at this']);
+  result = await controlRoom(rooms, { action: 'ping' });
+  assert.deepEqual(calls.at(-1), ['pingHere', '']);
+  result = await controlRoom(rooms, { action: 'follow' });
+  assert.equal(result.ok, false, 'the leader cannot follow');
+  assert.match(result.error, /leader/);
+
+  result = await controlRoom(rooms, { action: 'leave' });
+  assert.equal(result.left, true);
+  result = await controlRoom(rooms, { action: 'join', code: 'A B C 2 3 4' });
+  assert.equal(result.ok, true);
+  assert.equal(result.leader, 'Bob');
+  assert.equal(result.memberCount, 2);
+  assert.deepEqual(calls.at(-1), ['join', 'ABC234', 'Alice']);
+  result = await controlRoom(rooms, { action: 'join', code: '12' });
+  assert.match(result.error, /six-character/);
+  result = await controlRoom(rooms, { action: 'join', code: 'ZZZZZZ' });
+  assert.match(result.error, /not found/);
+
+  result = await controlRoom(rooms, { action: 'unfollow' });
+  assert.deepEqual(calls.at(-1), ['setFollowing', false]);
+  assert.equal(result.following, false);
+  result = await controlRoom(rooms, { action: 'follow' });
+  assert.deepEqual(calls.at(-1), ['rejoinLeader']);
+  result = await controlRoom(rooms, { action: 'take_lead' });
+  assert.deepEqual(calls.at(-1), ['takeLead']);
+  assert.equal(result.requested, true);
+  result = await controlRoom(rooms, { action: 'dance' });
+  assert.match(result.error, /Unsupported room action/);
+
+  // Through the runner: the schema is registered and the branch dispatches.
+  assert.ok(GEV_REALTIME_TOOLS.some((tool) => tool.name === 'control_room'));
+  globalThis.window = globalThis.window || { clearTimeout, setTimeout, requestIdleCallback: null };
+  const runner = createGevActionRunner({
+    viewer: {
+      clock: { onTick: { addEventListener: () => () => {} } },
+      scene: { canvas: { addEventListener() {}, removeEventListener() {} } },
+      camera: { moveEnd: { addEventListener() {} } },
+    },
+    styleManager: {},
+    dataManager: { layers: new Map() },
+    rooms,
+  });
+  const viaRunner = await runner('control_room', { action: 'status' });
+  assert.equal(viaRunner.action, 'control_room');
+  assert.equal(viaRunner.roomId, 'ABC234');
 });

@@ -107,6 +107,9 @@
     "./server/providers/atc": {
       "node": "./server/providers/atc.js"
     },
+    "./server/providers/rooms": {
+      "node": "./server/providers/rooms.js"
+    },
     "./server/providers/overpass": {
       "node": "./server/providers/overpass.js"
     },
@@ -136,6 +139,7 @@
     "./ui/location": "./src/ui/location.js",
     "./ui/radio": "./src/ui/radio.js",
     "./ui/atc": "./src/ui/atc.js",
+    "./ui/rooms": "./src/ui/rooms.js",
     "./ui/cctv": "./src/ui/cctv.js",
     "./ui/context": "./src/ui/context.js",
     "./ui/context/policy": "./src/contextModePolicy.js",
@@ -195,6 +199,7 @@
     "./standalone/settings": "./src/keySetup.js",
     "./voice/actions": "./src/voice/gevActions.js",
     "./annotations": "./src/annotations/index.js",
+    "./rooms": "./src/rooms/session.js",
     "./context": "./src/data/contextStore.js",
     "./build/html": {
       "node": "./build/application-html.js"

@@ -2,6 +2,9 @@ import { SceneDirector } from '../scenes/director.js';
 import { initAnnotations } from '../annotations/index.js';
 import { initDrawTool } from '../annotations/drawTool.js';
 import { initGevVoiceCommands } from '../voice/gevRealtime.js';
+import { RoomSession } from '../rooms/session.js';
+import { createRoomViewAdapter } from '../rooms/viewAdapter.js';
+import { RoomControls } from '../ui/rooms.js';
 import { installScopeMask, destroyScopeMask } from '../scopeMask.js';
 import {
   installRenderGovernor,
@@ -92,12 +95,32 @@ export function createApplicationTools({
   // loop burning behind a hidden tab. (perf wave 2 fix)
   syncVisibilitySuspension();
 
+  // Rooms: shared live sessions. The adapter is the only piece that touches
+  // the globe; the session and controls are plain state + DOM.
+  const roomView = createRoomViewAdapter({
+    viewer,
+    styleManager,
+    dataManager,
+    sceneDirector,
+  });
+  const rooms = new RoomSession({ view: roomView });
+  const roomControls = new RoomControls({
+    session: rooms,
+    toast: (message) => styleManager._showToast?.(message),
+  });
+  defer(() => {
+    roomControls.destroy();
+    rooms.destroy();
+    roomView.destroy();
+  });
+
   window.__godsEyeView = {
     viewer,
     styleManager,
     tileset,
     dataManager,
     sceneDirector,
+    rooms,
     mapStackController,
     annotations,
     weatherEffects,
@@ -122,6 +145,7 @@ export function createApplicationTools({
     dataManager,
     sceneDirector,
     annotations,
+    rooms,
   });
   defer(() => {
     voiceCommands.stop({ removeUi: true });

@@ -28,6 +28,11 @@
     <button id="share-btn" type="button" aria-label="Copy share link" title="Copy share link">
       <span class="share-icon" aria-hidden="true">&#x1F517;</span>
     </button>
+    <button id="room-chip" type="button" class="room-chip" aria-label="Rooms: shared live session" title="Rooms: share a live session" aria-expanded="false" aria-controls="room-panel" data-room-state="idle">
+      <span class="room-chip-dot" aria-hidden="true"></span>
+      <span class="room-chip-label">ROOM</span>
+      <span id="room-chip-count" class="room-chip-count" hidden></span>
+    </button>
     <button id="tilt-map-view" type="button" aria-label="Tilt map to oblique view" aria-pressed="false" title="Toggle straight-down and tilted map views">
       <span class="material-symbols-outlined" aria-hidden="true">view_in_ar</span>
     </button>
@@ -39,6 +44,75 @@
       <span class="material-symbols-outlined" aria-hidden="true">public</span>
     </button>
   </nav>
+  <!-- Rooms: shared live session panel (opened from the ROOM chip) -->
+  <section id="room-panel" class="room-panel" role="dialog" aria-modal="false" aria-labelledby="room-panel-title" hidden>
+    <div class="room-panel-header">
+      <span id="room-panel-title" class="room-panel-title">ROOM</span>
+      <span id="room-status" class="room-status" data-state="idle" role="status" aria-live="polite">Not in a room</span>
+      <button id="room-close-btn" type="button" class="room-icon-btn" aria-label="Close room panel">×</button>
+    </div>
+    <div id="room-notice" class="room-notice" role="status" aria-live="polite" hidden></div>
+    <div id="room-entry" class="room-entry">
+      <label class="room-field">
+        <span class="room-field-label">DISPLAY NAME</span>
+        <input id="room-name-input" type="text" maxlength="32" autocomplete="nickname" spellcheck="false" placeholder="Your name" />
+      </label>
+      <div class="room-entry-actions">
+        <button id="room-create-btn" type="button" class="room-btn room-btn-primary">CREATE ROOM</button>
+      </div>
+      <form id="room-join-form" class="room-join-form" autocomplete="off">
+        <label class="room-field">
+          <span class="room-field-label">JOIN BY CODE OR LINK</span>
+          <input id="room-code-input" type="text" maxlength="120" spellcheck="false" autocapitalize="characters" placeholder="ABC234 or a room link" />
+        </label>
+        <button id="room-join-btn" type="submit" class="room-btn">JOIN</button>
+      </form>
+      <p class="room-privacy">Rooms live in this server's memory only: no accounts, nothing stored, gone 30 minutes after the last person leaves. Anyone with the code can join.</p>
+    </div>
+    <div id="room-live" class="room-live" hidden>
+      <div class="room-code-row">
+        <span class="room-code-label">CODE</span>
+        <code id="room-code" class="room-code">------</code>
+        <button id="room-copy-link-btn" type="button" class="room-btn">COPY LINK</button>
+        <button id="room-leave-btn" type="button" class="room-btn room-btn-quiet">LEAVE</button>
+      </div>
+      <ul id="room-members" class="room-members" aria-label="Members"></ul>
+      <div class="room-follow-row">
+        <label class="room-follow-toggle">
+          <input id="room-follow-toggle" type="checkbox" checked />
+          <span>FOLLOW LEADER</span>
+        </label>
+        <button id="room-rejoin-btn" type="button" class="room-btn room-btn-primary" hidden>REJOIN LEADER</button>
+        <button id="room-lead-btn" type="button" class="room-btn">TAKE LEAD</button>
+      </div>
+      <div id="room-handoff-row" class="room-handoff-row" hidden>
+        <span class="room-field-label">HAND OFF TO</span>
+        <select id="room-handoff-select" class="room-select" aria-label="Hand off leadership to"></select>
+        <button id="room-handoff-btn" type="button" class="room-btn">HAND OFF</button>
+      </div>
+      <div class="room-actions-row">
+        <button id="room-ping-btn" type="button" class="room-btn" title="Drop a 20-second marker at the crosshair for everyone">PING HERE</button>
+        <button id="room-moment-btn" type="button" class="room-btn" title="Share this view as a moment others can jump to">SHARE MOMENT</button>
+      </div>
+      <form id="room-moment-form" class="room-moment-form" hidden>
+        <input id="room-moment-note" type="text" maxlength="280" placeholder="Optional note for this moment" />
+        <button type="submit" class="room-btn room-btn-primary">POST</button>
+        <button id="room-moment-cancel" type="button" class="room-btn room-btn-quiet">CANCEL</button>
+      </form>
+      <div class="room-section">
+        <span class="room-section-title">MOMENTS</span>
+        <ul id="room-moments" class="room-moments" aria-label="Shared moments"></ul>
+      </div>
+      <div class="room-section room-chat">
+        <span class="room-section-title">CHAT</span>
+        <ol id="room-chat-log" class="room-chat-log" aria-live="polite" aria-label="Room chat"></ol>
+        <form id="room-chat-form" class="room-chat-form" autocomplete="off">
+          <input id="room-chat-input" type="text" maxlength="500" placeholder="Message the room" aria-label="Chat message" />
+          <button type="submit" class="room-btn">SEND</button>
+        </form>
+      </div>
+    </div>
+  </section>
   <div id="global-loading-status" role="status" aria-live="polite" aria-atomic="true" hidden>
     <span id="global-loading-label">LOADING LIVE DATA</span>
     <span id="global-loading-detail"></span>
