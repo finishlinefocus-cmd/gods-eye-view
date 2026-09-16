@@ -4,7 +4,7 @@
 // `online` reflects the stream probe at generation time; `pageStatus` is the
 // UP/DOWN badge LiveATC showed on the page at the same moment.
 
-export const LIVEATC_GENERATED_AT = '2026-09-15T20:01:00.645Z';
+export const LIVEATC_GENERATED_AT = '2026-09-16T03:06:52.346Z';
 
 export const LIVEATC_AIRPORTS = Object.freeze([
   {
@@ -3094,6 +3094,297 @@ export const LIVEATC_AIRPORTS = Object.freeze([
           {
             facility: 'Atlanta Center (Sector 18 Commerce Ultra Low)',
             mhz: '134.800',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    icao: 'KCHA',
+    name: 'Chattanooga Metropolitan (Lovell Field)',
+    lat: 35.0353,
+    lon: -85.2038,
+    elevationFt: 683,
+    feeds: [
+      {
+        mount: 'kcha2',
+        label: 'KCHA Twr/App',
+        kind: 'tower',
+        online: true,
+        pageStatus: 'UP',
+        frequencies: [
+          {
+            facility: 'Chattanooga Approach/Departure',
+            mhz: '119.200',
+          },
+          {
+            facility: 'Chattanooga Approach/Departure',
+            mhz: '125.100',
+          },
+          {
+            facility: 'Chattanooga Tower',
+            mhz: '118.300',
+          },
+        ],
+      },
+    ],
+  },
+  {
+    icao: 'KDAB',
+    name: 'Daytona Beach International',
+    lat: 29.1799,
+    lon: -81.0581,
+    elevationFt: 34,
+    feeds: [
+      {
+        mount: 'kdab_app_all',
+        label: 'KDAB App/Dep',
+        kind: 'approach',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Approach (East/Low)',
+            mhz: '123.900',
+          },
+          {
+            facility: 'Daytona Approach (North/High)',
+            mhz: '118.850',
+          },
+          {
+            facility: 'Daytona Approach (North/Low)',
+            mhz: '125.800',
+          },
+          {
+            facility: 'Daytona Approach (South/High)',
+            mhz: '127.075',
+          },
+          {
+            facility: "Daytona Approach (West 8000-10000')",
+            mhz: '125.725',
+          },
+          {
+            facility: 'Daytona Approach (West SFC-3500)',
+            mhz: '126.550',
+          },
+          {
+            facility: 'Daytona Approach/Departure (South)',
+            mhz: '125.350',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_app_123900',
+        label: 'KDAB App/Dep (East/Low)',
+        kind: 'approach',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Approach (East/Low)',
+            mhz: '123.900',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_app_118850',
+        label: 'KDAB App/Dep (North/High)',
+        kind: 'approach',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Approach (North/High)',
+            mhz: '118.850',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_app_125800',
+        label: 'KDAB App/Dep (North/Low)',
+        kind: 'approach',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Approach (North/Low)',
+            mhz: '125.800',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_app_125350',
+        label: 'KDAB App/Dep (South)',
+        kind: 'approach',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Approach/Departure (South)',
+            mhz: '125.350',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_app_127075',
+        label: 'KDAB App/Dep (South/High)',
+        kind: 'approach',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Approach (South/High)',
+            mhz: '127.075',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_atis2',
+        label: 'KDAB ATIS',
+        kind: 'other',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Beach ATIS',
+            mhz: '132.875',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_del',
+        label: 'KDAB Clearance Delivery',
+        kind: 'clearance',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Clearance Delivery',
+            mhz: '119.300',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_del_gnd',
+        label: 'KDAB Clearance/Ground',
+        kind: 'clearance',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Clearance',
+            mhz: '119.300',
+          },
+          {
+            facility: 'Daytona Ground',
+            mhz: '121.900',
+          },
+          {
+            facility: 'Daytona Ground',
+            mhz: '124.250',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_gnd_121900',
+        label: 'KDAB Ground',
+        kind: 'ground',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Ground',
+            mhz: '121.900',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_twr_sec_radio',
+        label: 'KDAB Tower (118.1) #1',
+        kind: 'tower',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Tower (Secondary 7R/25L)',
+            mhz: '118.100',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_twr_sec',
+        label: 'KDAB Tower (118.1) #2',
+        kind: 'tower',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Tower (Secondary 7R/25L)',
+            mhz: '118.100',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_twr_pri_radio',
+        label: 'KDAB Tower (120.7) #1',
+        kind: 'tower',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Tower (Primary 7L/25R)',
+            mhz: '120.700',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_twr_pri',
+        label: 'KDAB Tower (120.7) #2',
+        kind: 'tower',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Tower (Primary 7L/25R)',
+            mhz: '120.700',
+          },
+        ],
+      },
+      {
+        mount: 'kdab_twr',
+        label: 'KDAB Tower (Both)',
+        kind: 'tower',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Daytona Tower (Primary 7L/25R)',
+            mhz: '120.700',
+          },
+          {
+            facility: 'Daytona Tower (Secondary 7R/25L)',
+            mhz: '118.100',
+          },
+        ],
+      },
+      {
+        mount: 'zjx_dab',
+        label: 'ZJX Daytona Beach',
+        kind: 'center',
+        online: false,
+        pageStatus: 'DOWN',
+        frequencies: [
+          {
+            facility: 'Jacksonville Center (Sector 35 Torry Low/High)',
+            mhz: '134.850',
+          },
+          {
+            facility: 'Jacksonville Center (Sector 57 St. Johns Low)',
+            mhz: '134.000',
+          },
+          {
+            facility: 'Jacksonville Center (Sector 58 St. Augustine Low/High)',
+            mhz: '126.350',
           },
         ],
       },

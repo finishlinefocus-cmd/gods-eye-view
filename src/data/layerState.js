@@ -223,6 +223,14 @@ const OPTION_GROUPS = Object.freeze({
     booleanOption('showProjection', 'p', true),
     booleanOption('autoHop', 'a', false),
   ]),
+  corridor: Object.freeze([
+    booleanOption('cams', 'c', true),
+    booleanOption('incidents', 'i', true),
+    booleanOption('transit', 't', true),
+    booleanOption('alerts', 'a', true),
+    booleanOption('gauges', 'g', true),
+    booleanOption('air', 'q', true),
+  ]),
   radio: Object.freeze([
     Object.freeze({
       key: 'filter',
@@ -280,6 +288,7 @@ export const LAYER_STATE_REGISTRY = Object.freeze([
   Object.freeze({ id: 'atc', token: 'h', disposition: 'enabled-only' }),
   Object.freeze({ id: 'bikeshare', token: 'b', disposition: 'enabled-only' }),
   Object.freeze({ id: 'cctv', token: 'c', disposition: 'enabled+options', optionOwner: 'cctv' }),
+  Object.freeze({ id: 'corridor', token: 'k', disposition: 'enabled+options', optionOwner: 'corridor' }),
   Object.freeze({ id: 'directions', token: 'n', disposition: 'enabled-only' }),
   Object.freeze({ id: 'earthquakes', token: 'e', disposition: 'enabled-only' }),
   Object.freeze({ id: 'flights', token: 'f', disposition: 'enabled+options', optionOwner: 'flights' }),

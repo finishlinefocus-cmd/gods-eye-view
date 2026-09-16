@@ -24,11 +24,11 @@ const css = readStylesheet(new URL('../style.css', import.meta.url));
 
 function realtimeTools() { return GEV_REALTIME_TOOLS; }
 
-test('Realtime schema exposes the authoritative 30-tool inventory', () => {
+test('Realtime schema exposes the authoritative 31-tool inventory', () => {
   const tools = realtimeTools();
-  assert.equal(tools.length, 30);
+  assert.equal(tools.length, 31);
   const names = tools.map((tool) => tool.name);
-  assert.equal(new Set(names).size, 30, 'tool names are unique');
+  assert.equal(new Set(names).size, 31, 'tool names are unique');
   assert.ok(names.includes('set_context_mode'));
   assert.ok(names.includes('control_cockpit'));
   assert.ok(names.includes('select_nearest_aircraft'));
@@ -182,17 +182,24 @@ test('no unchanged Realtime tool definition drifts silently', () => {
     'set_layer_visibility',
     // Rooms: a new tool (control_room); nothing else moved.
     'control_room',
+    // Corridor: a new tool (show_corridor); the destination-preset enum in
+    // fly_to_location / select_nearest_aircraft / control_radio gained
+    // chattanooga, atlanta, corridor, daytona, orlando; the two layer menus
+    // gained `corridor`.
+    'show_corridor',
+    'show_data_layers_menu',
+    'control_radio',
   ]);
   const unchanged = realtimeTools()
     .filter((tool) => !TOUCHED.has(tool.name))
     .sort((a, b) => a.name.localeCompare(b.name));
-  assert.equal(unchanged.length, 20);
+  assert.equal(unchanged.length, 18);
   const digest = createHash('sha256')
     .update(JSON.stringify(unchanged))
     .digest('hex')
     .slice(0, 16);
   // ALPR intentionally extends the two layer enums; retain the complete pin.
-  assert.equal(digest, 'f41c473df1015fd2', 'an unchanged Realtime tool definition drifted');
+  assert.equal(digest, '9670755afebdfe44', 'an unchanged Realtime tool definition drifted');
 });
 
 test('Radio volume and mission speed share the Sharpen slider visual language', () => {

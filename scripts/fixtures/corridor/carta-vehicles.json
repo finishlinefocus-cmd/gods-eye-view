@@ -1,0 +1,32 @@
+{
+ "bustime-response": {
+  "vehicle": [
+   {
+    "vid": "101",
+    "tmstmp": "20260915 22:10",
+    "lat": "35.0456",
+    "lon": "-85.3097",
+    "hdg": "180",
+    "pid": 1,
+    "rt": "4",
+    "des": "Eastgate",
+    "pdist": 1000,
+    "dly": false,
+    "spd": 22
+   },
+   {
+    "vid": "102",
+    "tmstmp": "20260915 22:10",
+    "lat": "36.5",
+    "lon": "-86.5",
+    "hdg": "90",
+    "pid": 2,
+    "rt": "9",
+    "des": "Nowhere",
+    "pdist": 0,
+    "dly": false,
+    "spd": 0
+   }
+  ]
+ }
+}

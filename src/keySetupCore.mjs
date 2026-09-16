@@ -104,6 +104,30 @@ export const KEY_SETUP_KEYS = Object.freeze([
     envVars: Object.freeze(['LL2_API_TOKEN']),
     tier: 'free',
   }),
+  Object.freeze({
+    id: 'ga511',
+    title: 'GEORGIA 511',
+    unlocks: 'Corridor: GDOT traffic cameras + Georgia incidents',
+    getUrl: 'https://511ga.org/my511/register',
+    envVars: Object.freeze(['GA511_API_KEY']),
+    tier: 'free',
+  }),
+  Object.freeze({
+    id: 'tdot',
+    title: 'TDOT SMARTWAY',
+    unlocks: 'Corridor: Tennessee traffic cameras (key issued by TDOT on request)',
+    getUrl: 'https://www.tdot.tn.gov/opendata/',
+    envVars: Object.freeze(['TDOT_API_KEY']),
+    tier: 'free',
+  }),
+  Object.freeze({
+    id: 'carta',
+    title: 'CARTA BUSTIME',
+    unlocks: 'Corridor: Chattanooga live buses (key issued by CARTA on request)',
+    getUrl: 'https://bustracker.gocarta.org/bustime/apidoc/docs/DeveloperAPIGuide3_0.pdf',
+    envVars: Object.freeze(['CARTA_BUSTIME_KEY']),
+    tier: 'free',
+  }),
 ]);
 
 /** Hostnames a Provider Settings request may arrive under or originate from. */

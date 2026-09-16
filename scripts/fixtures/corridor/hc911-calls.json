@@ -1,0 +1,182 @@
+{
+ "objectIdFieldName": "OBJECTID",
+ "uniqueIdField": {
+  "name": "OBJECTID",
+  "isSystemMaintained": true
+ },
+ "globalIdFieldName": "",
+ "geometryType": "esriGeometryPoint",
+ "spatialReference": {
+  "wkid": 4326,
+  "latestWkid": 4326
+ },
+ "fields": [
+  {
+   "name": "Master_Incident_Number",
+   "type": "esriFieldTypeString",
+   "alias": "Master_Incident_Number",
+   "sqlType": "sqlTypeOther",
+   "length": 13,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "Response_Date",
+   "type": "esriFieldTypeDate",
+   "alias": "Response_Date",
+   "sqlType": "sqlTypeOther",
+   "length": 8,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "Problem",
+   "type": "esriFieldTypeString",
+   "alias": "Problem",
+   "sqlType": "sqlTypeOther",
+   "length": 28,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "Address",
+   "type": "esriFieldTypeString",
+   "alias": "Address",
+   "sqlType": "sqlTypeOther",
+   "length": 39,
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "Latitude",
+   "type": "esriFieldTypeDouble",
+   "alias": "Latitude",
+   "sqlType": "sqlTypeOther",
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "Longitude",
+   "type": "esriFieldTypeDouble",
+   "alias": "Longitude",
+   "sqlType": "sqlTypeOther",
+   "domain": null,
+   "defaultValue": null
+  },
+  {
+   "name": "OBJECTID",
+   "type": "esriFieldTypeOID",
+   "alias": "OBJECTID",
+   "sqlType": "sqlTypeOther",
+   "domain": null,
+   "defaultValue": null
+  }
+ ],
+ "features": [
+  {
+   "attributes": {
+    "Master_Incident_Number": "2026-09-23593",
+    "Response_Date": 1789507396000,
+    "Problem": "Check For A Hazard",
+    "Address": "ROBIN DR / LEE HWY",
+    "Latitude": 35.050662,
+    "Longitude": -85.15307,
+    "OBJECTID": 35
+   },
+   "geometry": {
+    "x": -85.15306999999999,
+    "y": 35.050661999999996
+   }
+  },
+  {
+   "attributes": {
+    "Master_Incident_Number": "2026-09-23593",
+    "Response_Date": 1789507396000,
+    "Problem": "Check For A Hazard",
+    "Address": "ROBIN DR / LEE HWY",
+    "Latitude": 35.050662,
+    "Longitude": -85.15307,
+    "OBJECTID": 1035
+   },
+   "geometry": {
+    "x": -85.15306999999999,
+    "y": 35.050661999999996
+   }
+  },
+  {
+   "attributes": {
+    "Master_Incident_Number": "2026-09-23522",
+    "Response_Date": 1789505032000,
+    "Problem": "Auto Broken Down",
+    "Address": "5519 - 5559 HIGHWAY 153",
+    "Latitude": 35.146474,
+    "Longitude": -85.249254,
+    "OBJECTID": 21
+   },
+   "geometry": {
+    "x": -85.249254,
+    "y": 35.146474
+   }
+  },
+  {
+   "attributes": {
+    "Master_Incident_Number": "2026-09-23512",
+    "Response_Date": 1789504593000,
+    "Problem": "Check For A Hazard",
+    "Address": "6811 - 6829 E BRAINERD RD",
+    "Latitude": 35.016871,
+    "Longitude": -85.182008,
+    "OBJECTID": 41
+   },
+   "geometry": {
+    "x": -85.182008,
+    "y": 35.01687099999999
+   }
+  },
+  {
+   "attributes": {
+    "Master_Incident_Number": "2026-09-23488",
+    "Response_Date": 1789504039000,
+    "Problem": "Auto Broken Down Road",
+    "Address": "7500 - 7549 BONNY OAKS DR",
+    "Latitude": 35.060683,
+    "Longitude": -85.134235,
+    "OBJECTID": 23
+   },
+   "geometry": {
+    "x": -85.134235,
+    "y": 35.060683
+   }
+  },
+  {
+   "attributes": {
+    "Master_Incident_Number": "2026-09-23471",
+    "Response_Date": 1789503422000,
+    "Problem": "Auto Broken Down Road",
+    "Address": "700 INTERSTATE 75 SB",
+    "Latitude": 35.055134,
+    "Longitude": -85.138001,
+    "OBJECTID": 28
+   },
+   "geometry": {
+    "x": -85.138001,
+    "y": 35.05513399999999
+   }
+  },
+  {
+   "attributes": {
+    "Master_Incident_Number": "2026-09-99999",
+    "Response_Date": 1789507396000,
+    "Problem": "Far away",
+    "Address": "NOWHERE",
+    "Latitude": 36.5,
+    "Longitude": -86.5,
+    "OBJECTID": 999
+   },
+   "geometry": {
+    "x": -86.5,
+    "y": 36.5
+   }
+  }
+ ]
+}

@@ -94,6 +94,19 @@ const PHRASES = [
   { phrase: 'Show me the whole earth', expect: 'zoom_to_globe' },
   { phrase: 'Frame the aircraft near us from overhead', expect: 'frame_overhead' },
 
+  // — corridor: CHA ↔ ATL destination presets and the briefing tool —
+  { phrase: 'Take me to Chattanooga', expect: 'fly_to_location', args: { locationId: 'chattanooga' } },
+  { phrase: 'Chattanooga airport', expect: 'fly_to_location', args: { locationId: 'chattanooga' } },
+  { phrase: 'Go to Atlanta', expect: 'fly_to_location', args: { locationId: 'atlanta' } },
+  { phrase: 'Fly to Daytona Beach airport', expect: 'fly_to_location', args: { locationId: 'daytona' } },
+  { phrase: 'Take me to Orlando', expect: 'fly_to_location', args: { locationId: 'orlando' } },
+  { phrase: 'MCO', expect: 'fly_to_location', args: { locationId: 'orlando' } },
+  { phrase: 'Show me the corridor', expect: 'show_corridor' },
+  { phrase: 'Chattanooga to Atlanta', expect: { oneOf: ['show_corridor', 'fly_to_location'] } },
+  { phrase: "What's happening between Chattanooga and Atlanta?", expect: 'show_corridor', args: { includeSummary: true } },
+  { phrase: 'Play Chattanooga tower', expect: 'control_atc', args: { action: 'play' } },
+  { phrase: 'Orlando tower', expect: 'control_atc', args: { action: 'play' } },
+
   // — the satellites trap: data layer, never basemap —
   { phrase: 'Show me the satellites', expect: { oneOf: ['set_layer_visibility', 'frame_overhead'] } },
   { phrase: 'Turn off the satellites', expect: 'set_layer_visibility', args: { layerId: 'satellites' } },

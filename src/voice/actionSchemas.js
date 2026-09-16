@@ -17,6 +17,11 @@ const schemas = [
             'paris',
             'dubai',
             'dc',
+            'chattanooga',
+            'atlanta',
+            'corridor',
+            'daytona',
+            'orlando',
           ],
         },
         query: {
@@ -68,6 +73,11 @@ const schemas = [
             'paris',
             'dubai',
             'dc',
+            'chattanooga',
+            'atlanta',
+            'corridor',
+            'daytona',
+            'orlando',
           ],
         },
         locationQuery: {
@@ -132,6 +142,7 @@ const schemas = [
             'cctv',
             'radio',
             'atc',
+            'corridor',
             'bikeshare',
             'ais-live-vessels',
             'local-datacenters',
@@ -165,6 +176,7 @@ const schemas = [
             'cctv',
             'radio',
             'atc',
+            'corridor',
             'bikeshare',
             'ais-live-vessels',
             'local-datacenters',
@@ -495,6 +507,11 @@ const schemas = [
             'paris',
             'dubai',
             'dc',
+            'chattanooga',
+            'atlanta',
+            'corridor',
+            'daytona',
+            'orlando',
           ],
         },
         locationQuery: {
@@ -550,6 +567,22 @@ const schemas = [
         },
       },
       required: ['action'],
+    },
+  },
+  {
+    name: 'show_corridor',
+    parameters: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        includeSummary: {
+          type: 'boolean',
+        },
+        frame: {
+          type: 'boolean',
+        },
+      },
+      required: [],
     },
   },
   {

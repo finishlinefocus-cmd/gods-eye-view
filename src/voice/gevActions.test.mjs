@@ -11,6 +11,7 @@ import { normalizeRadioCountryInput } from '../data/radioCountry.js';
 import { TR3B_CLASS } from '../data/tr3bRegistry.js';
 import {
   controlAtc,
+  showCorridor,
   controlRoom,
   spokenRoomCode,
   controlCctv,
@@ -3395,4 +3396,102 @@ test('voice rooms: create/join/leave/lead/follow/share/ping/status over the Room
   const viaRunner = await runner('control_room', { action: 'status' });
   assert.equal(viaRunner.action, 'control_room');
   assert.equal(viaRunner.roomId, 'ABC234');
+});
+
+test('corridor voice: show_corridor enables the layer, frames it, and answers questions with a summary', async () => {
+  const calls = [];
+  let enabled = false;
+  const corridor = {
+    async frameCorridor(options) {
+      calls.push(['frame', options]);
+      return true;
+    },
+    async update() {
+      calls.push(['update']);
+      return true;
+    },
+    isInsideCorridor: (lon, lat) => lon > -85.6 && lon < -84.1 && lat > 33.4 && lat < 35.3,
+    getSummary: (extra) => ({ counts: { alerts: 1, incidents: 3, ...extra }, text: `1 alert; 3 incidents; ${extra.flights ?? 0} aircraft`, keyRequired: ['ga511'] }),
+  };
+  const flights = {
+    getAnalystRecords: () => [
+      { id: 'A', lat: 34.5, lon: -84.9 },
+      { id: 'B', lat: 40.0, lon: -74.0 },
+    ],
+  };
+  const dataManager = {
+    layers: new Map([['corridor', { module: corridor }], ['flights', { module: flights }]]),
+    isEnabled: (id) => (id === 'corridor' ? enabled : id === 'flights'),
+    async setEnabled(id, value, options) {
+      calls.push(['enabled', id, value, options]);
+      enabled = value;
+      return true;
+    },
+    getLayerLifecycleState: () => ({ lifecycleState: enabled ? 'enabled' : 'disabled', enabled, uncertain: false }),
+  };
+
+  let result = await showCorridor({}, dataManager, {});
+  assert.equal(result.ok, true);
+  assert.equal(result.action, 'show_corridor');
+  assert.equal(result.framed, true);
+  assert.equal(result.summary, undefined, 'a plain "show me the corridor" carries no counts');
+  assert.deepEqual(calls[0], ['enabled', 'corridor', true, { origin: 'voice' }]);
+  assert.equal(calls[1][0], 'frame');
+
+  calls.length = 0;
+  result = await showCorridor({}, dataManager, { includeSummary: true, frame: false });
+  assert.equal(result.ok, true);
+  assert.equal(result.framed, false);
+  assert.ok(!calls.some(([name]) => name === 'enabled'), 'an enabled layer is not re-enabled');
+  assert.ok(!calls.some(([name]) => name === 'frame'), 'frame=false leaves the camera alone');
+  assert.equal(result.summary.counts.flights, 1, 'only aircraft inside the corridor bbox are counted');
+  assert.match(result.summary.text, /3 incidents; 1 aircraft/);
+  assert.deepEqual(result.summary.keyRequired, ['ga511']);
+
+  const missing = await showCorridor({}, { layers: new Map(), isEnabled: () => false, getLayerLifecycleState: () => null }, {});
+  assert.equal(missing.ok, false);
+  assert.match(missing.error, /unavailable/);
+});
+
+test('corridor voice: destination presets and spoken aliases resolve to locationIds, never geocoding', async () => {
+  globalThis.window = globalThis.window || { clearTimeout, setTimeout, requestIdleCallback: null };
+  const { viewer, styleManager } = createVoiceNavigationHarness();
+  const flights = [];
+  viewer.camera.flyTo = (options) => {
+    flights.push(options);
+    options.complete?.();
+  };
+  styleManager.runImmediateLocationNavigation = (navigate) => (
+    styleManager.runImmediateNavigation('location', navigate)
+  );
+  let geocoded = 0;
+  const runner = createGevActionRunner({
+    viewer,
+    styleManager,
+    dataManager: { layers: new Map(), getAll: () => [] },
+    placeSearch: { search: async () => { geocoded += 1; return []; } },
+  });
+  const cases = [
+    [{ locationId: 'chattanooga' }, 'chattanooga'],
+    [{ locationId: 'atlanta' }, 'atlanta'],
+    [{ locationId: 'corridor' }, 'corridor'],
+    [{ locationId: 'daytona' }, 'daytona'],
+    [{ locationId: 'orlando' }, 'orlando'],
+    [{ query: 'Chattanooga airport' }, 'chattanooga'],
+    [{ query: 'Lovell Field' }, 'chattanooga'],
+    [{ query: 'Hartsfield' }, 'atlanta'],
+    [{ query: 'ATL' }, 'atlanta'],
+    [{ query: 'the corridor' }, 'corridor'],
+    [{ query: 'Chattanooga to Atlanta' }, 'corridor'],
+    [{ query: 'Daytona Beach airport' }, 'daytona'],
+    [{ query: 'Orlando airport' }, 'orlando'],
+    [{ query: 'MCO' }, 'orlando'],
+  ];
+  for (const [args, expected] of cases) {
+    const result = await runner('fly_to_location', args);
+    assert.equal(result.ok, true, JSON.stringify(args));
+    assert.equal(result.locationId, expected, JSON.stringify(args));
+  }
+  assert.equal(geocoded, 0, 'preset destinations never reach the geocoder');
+  assert.equal(flights.length, cases.length);
 });

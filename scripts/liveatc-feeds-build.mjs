@@ -25,6 +25,9 @@
  *       reuse/save raw pages under dir (reruns without refetching)
  *   LIVEATC_CACHE_ONLY=1 LIVEATC_SKIP_PROBES=1 ... (offline: parse the cache, no probes)
  *   LIVEATC_REPROBE_OFFLINE=1 ... (keep mounts already online, re-probe the rest)
+ *   LIVEATC_MERGE=1 node scripts/liveatc-feeds-build.mjs KCHA
+ *       subset run that KEEPS every other airport's committed feeds (one new
+ *       airport = one page load + its probes, nothing else is refetched)
  */
 
 import fs from 'node:fs';
@@ -102,6 +105,20 @@ export const AIRPORTS = Object.freeze([
     lat: 33.6407,
     lon: -84.4277,
     elevationFt: 1026,
+  },
+  {
+    icao: 'KCHA',
+    name: 'Chattanooga Metropolitan (Lovell Field)',
+    lat: 35.0353,
+    lon: -85.2038,
+    elevationFt: 683,
+  },
+  {
+    icao: 'KDAB',
+    name: 'Daytona Beach International',
+    lat: 29.1799,
+    lon: -81.0581,
+    elevationFt: 34,
   },
   {
     icao: 'KDFW',
@@ -691,9 +708,27 @@ async function main() {
     airport.feeds = feeds;
   }
 
+  // Merge mode: a subset run splices its airports into the committed
+  // directory instead of replacing it, preserving AIRPORTS order.
+  let output = results;
+  if (process.env.LIVEATC_MERGE === '1' && wanted.size && fs.existsSync(OUT)) {
+    const previous = await import(`${pathToFileURL(OUT).href}?m=${Date.now()}`);
+    const kept = new Map(
+      (previous.LIVEATC_AIRPORTS || []).map((airport) => [
+        airport.icao,
+        airport,
+      ]),
+    );
+    for (const airport of results) kept.set(airport.icao, airport);
+    output = AIRPORTS.map((airport) => kept.get(airport.icao)).filter(Boolean);
+    console.log(
+      `[liveatc] merged ${results.length} airport(s) into ${output.length} committed`,
+    );
+  }
+
   const generatedAt = new Date().toISOString();
   fs.mkdirSync(path.dirname(OUT), { recursive: true });
-  fs.writeFileSync(OUT, renderModule(generatedAt, results));
+  fs.writeFileSync(OUT, renderModule(generatedAt, output));
   console.log(
     `[liveatc] wrote ${path.relative(process.cwd(), OUT)}: ${results.length} airports, ${total} feeds, ${online} online`,
   );

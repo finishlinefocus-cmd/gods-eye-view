@@ -1,0 +1,100 @@
+[
+ {
+  "validDate": "09/15/26",
+  "timezone": "EDT",
+  "time": "22:00",
+  "dataType": "O",
+  "reportingArea": "Chattanooga",
+  "latitude": 35.052,
+  "longitude": -85.3591,
+  "parameter": "PM2.5",
+  "aqi": 58,
+  "category": "Moderate"
+ },
+ {
+  "validDate": "09/15/26",
+  "timezone": "EDT",
+  "time": "22:00",
+  "dataType": "O",
+  "reportingArea": "Chattanooga",
+  "latitude": 35.052,
+  "longitude": -85.3591,
+  "parameter": "OZONE",
+  "aqi": 47,
+  "category": "Good"
+ },
+ {
+  "validDate": "09/15/26",
+  "timezone": "EDT",
+  "time": "",
+  "dataType": "F",
+  "reportingArea": "Chattanooga",
+  "latitude": 35.052,
+  "longitude": -85.3591,
+  "parameter": "OZONE",
+  "aqi": 51,
+  "category": "Moderate"
+ },
+ {
+  "validDate": "09/15/26",
+  "timezone": "EDT",
+  "time": "",
+  "dataType": "F",
+  "reportingArea": "Chattanooga",
+  "latitude": 35.052,
+  "longitude": -85.3591,
+  "parameter": "PM2.5",
+  "aqi": 51,
+  "category": "Moderate"
+ },
+ {
+  "validDate": "09/15/26",
+  "timezone": "EDT",
+  "time": "",
+  "dataType": "F",
+  "reportingArea": "Tri-Cities",
+  "latitude": 36.4985,
+  "longitude": -82.358,
+  "parameter": "PM2.5",
+  "aqi": 50,
+  "category": "Good"
+ },
+ {
+  "validDate": "09/15/26",
+  "timezone": "EDT",
+  "time": "",
+  "dataType": "F",
+  "reportingArea": "Tri-Cities",
+  "latitude": 36.4985,
+  "longitude": -82.358,
+  "parameter": "OZONE",
+  "aqi": 49,
+  "category": "Good"
+ },
+ {
+  "validDate": "09/15/26",
+  "timezone": "EDT",
+  "time": "22:00",
+  "dataType": "O",
+  "reportingArea": "Atlanta",
+  "stateCode": "GA",
+  "latitude": 33.749,
+  "longitude": -84.388,
+  "parameter": "PM2.5",
+  "aqi": 64,
+  "category": "Moderate"
+ },
+ {
+  "validDate": "09/15/26",
+  "timezone": "EDT",
+  "time": "22:00",
+  "dataType": "O",
+  "reportingArea": "Knoxville",
+  "stateCode": "TN",
+  "latitude": 35.96,
+  "longitude": -83.92,
+  "parameter": "OZONE",
+  "aqi": 40,
+  "category": "Good"
+ }
+]

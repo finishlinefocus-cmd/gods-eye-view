@@ -116,6 +116,17 @@ function metroTransitRouteMode(routeId) {
 }
 
 /**
+ * MARTA rail lines carry colour names as route ids; everything else is bus.
+ * @param {string|null} routeId
+ * @returns {string}
+ */
+function martaRouteMode(routeId) {
+  if (!routeId) return 'unknown';
+  if (/^(RED|GOLD|BLUE|GREEN)$/i.test(routeId)) return 'subway';
+  return 'bus';
+}
+
+/**
  * Registry of feeds. Order is presentation order in the stats/credit text.
  * `loadRadiusKm` is the distance from `center` inside which the feed is polled.
  * @type {ReadonlyArray<Readonly<{
@@ -269,6 +280,26 @@ export const TRANSIT_FEED_REGISTRY = Object.freeze([
       note: 'No key, no stated rate limit, no caching rule. Logos and network imagery need separate approval, so the credit is text only.',
     }),
     defaultMode: 'bus',
+  }),
+  Object.freeze({
+    id: 'marta',
+    name: 'MARTA',
+    operator: 'Metropolitan Atlanta Rapid Transit Authority',
+    region: 'Atlanta, GA',
+    center: Object.freeze({ lat: 33.749, lon: -84.388 }),
+    loadRadiusKm: 60,
+    url: 'https://gtfs-rt.itsmarta.com/TMGTFSRealTimeWebService/vehicle/vehiclepositions.pb',
+    license: 'MARTA App Developer Resources (open feed, trademark restriction)',
+    licenseUrl: 'https://www.itsmarta.com/app-developer-resources.aspx',
+    attribution: 'MARTA — Metropolitan Atlanta Rapid Transit Authority',
+    defaultEnabled: true,
+    terms: Object.freeze({
+      quote:
+        'You agree not to use, copy, modify, display, or distribute any MARTA Marks for any commercial or non-commercial purpose, including but not limited to the development of apps, websites, or any digital media, without prior written consent from MARTA.',
+      note: 'The feed is published for app developers with no key, no stated rate limit and no data licence text; the only restriction is on MARTA logos and marks, so the credit is the operator name as text.',
+    }),
+    defaultMode: 'bus',
+    routeMode: martaRouteMode,
   }),
 ]);
 

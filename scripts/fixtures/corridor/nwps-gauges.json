@@ -1,0 +1,188 @@
+{
+ "gauges": [
+  {
+   "lid": "AANG1",
+   "name": "Peachtree Creek at Atlanta",
+   "state": {
+    "abbreviation": "GA",
+    "name": "Georgia"
+   },
+   "latitude": 33.82030556,
+   "longitude": -84.40763889,
+   "status": {
+    "observed": {
+     "primary": 2.24,
+     "primaryUnit": "ft",
+     "secondary": 0.0276,
+     "secondaryUnit": "kcfs",
+     "floodCategory": "no_flooding",
+     "validTime": "2026-09-16T01:00:00Z"
+    },
+    "forecast": {
+     "primary": -999,
+     "primaryUnit": "",
+     "secondary": -999,
+     "secondaryUnit": "",
+     "floodCategory": "fcst_not_current",
+     "validTime": "0001-01-01T00:00:00Z"
+    }
+   }
+  },
+  {
+   "lid": "CHAT1",
+   "name": "Tennessee River at Chattanooga",
+   "state": {
+    "abbreviation": "TN",
+    "name": "Tennessee"
+   },
+   "latitude": 35.056111111111,
+   "longitude": -85.306388888889,
+   "status": {
+    "observed": {
+     "primary": 634.1,
+     "primaryUnit": "ft",
+     "secondary": 40.5,
+     "secondaryUnit": "kcfs",
+     "floodCategory": "no_flooding",
+     "validTime": "2026-09-16T01:00:00Z"
+    },
+    "forecast": {
+     "primary": 634.68,
+     "primaryUnit": "ft",
+     "secondary": 43.3,
+     "secondaryUnit": "kcfs",
+     "floodCategory": "no_flooding",
+     "validTime": "2026-09-17T05:00:00Z"
+    }
+   }
+  },
+  {
+   "lid": "CKDT1",
+   "name": "Tennessee River at Chickamauga Dam",
+   "state": {
+    "abbreviation": "TN",
+    "name": "Tennessee"
+   },
+   "latitude": 35.1025,
+   "longitude": -85.228167,
+   "status": {
+    "observed": {
+     "primary": 681.94,
+     "primaryUnit": "ft",
+     "secondary": -999,
+     "secondaryUnit": "kcfs",
+     "floodCategory": "not_defined",
+     "validTime": "2026-09-16T01:00:00Z"
+    },
+    "forecast": {
+     "primary": 682.17,
+     "primaryUnit": "ft",
+     "secondary": -999,
+     "secondaryUnit": "kcfs",
+     "floodCategory": "not_defined",
+     "validTime": "2026-09-16T11:00:00Z"
+    }
+   }
+  },
+  {
+   "lid": "RMBG1",
+   "name": "Coosa River at Mayos Bar Lock and Dam near Rome",
+   "state": {
+    "abbreviation": "GA",
+    "name": "Georgia"
+   },
+   "latitude": 34.200277777778,
+   "longitude": -85.256666666667,
+   "status": {
+    "observed": {
+     "primary": 10.82,
+     "primaryUnit": "ft",
+     "secondary": 1.22,
+     "secondaryUnit": "kcfs",
+     "floodCategory": "no_flooding",
+     "validTime": "2026-09-16T00:45:00Z"
+    },
+    "forecast": {
+     "primary": -999,
+     "primaryUnit": "",
+     "secondary": -999,
+     "secondaryUnit": "",
+     "floodCategory": "fcst_not_current",
+     "validTime": "0001-01-01T00:00:00Z"
+    }
+   }
+  },
+  {
+   "lid": "VING1",
+   "name": "Chattahoochee River at Atlanta",
+   "state": {
+    "abbreviation": "GA",
+    "name": "Georgia"
+   },
+   "latitude": 33.858888888889,
+   "longitude": -84.454166666667,
+   "status": {
+    "observed": {
+     "primary": 3.06,
+     "primaryUnit": "ft",
+     "secondary": 1.32,
+     "secondaryUnit": "kcfs",
+     "floodCategory": "no_flooding",
+     "validTime": "2026-09-16T01:45:00Z"
+    },
+    "forecast": {
+     "primary": 3.2,
+     "primaryUnit": "ft",
+     "secondary": 1.47,
+     "secondaryUnit": "kcfs",
+     "floodCategory": "no_flooding",
+     "validTime": "2026-09-18T12:00:00Z"
+    }
+   }
+  },
+  {
+   "lid": "BGDG1",
+   "name": "Long Swamp Creek near Nelson",
+   "state": {
+    "abbreviation": "GA",
+    "name": "Georgia"
+   },
+   "latitude": 34.374722222222,
+   "longitude": -84.3475,
+   "status": {
+    "observed": {
+     "primary": -999,
+     "primaryUnit": "",
+     "secondary": -999,
+     "secondaryUnit": "",
+     "floodCategory": "out_of_service",
+     "validTime": "0001-01-01T00:00:00Z"
+    },
+    "forecast": {
+     "primary": -999,
+     "primaryUnit": "",
+     "secondary": -999,
+     "secondaryUnit": "",
+     "floodCategory": "out_of_service",
+     "validTime": "0001-01-01T00:00:00Z"
+    }
+   }
+  },
+  {
+   "lid": "ZZZZ9",
+   "name": "Far away creek",
+   "latitude": 36.5,
+   "longitude": -86.5,
+   "status": {
+    "observed": {
+     "primary": 3.2,
+     "primaryUnit": "ft",
+     "secondary": 0.1,
+     "secondaryUnit": "kcfs",
+     "floodCategory": "no_flooding",
+     "validTime": "2026-09-16T01:00:00Z"
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,59 @@
+[
+ {
+  "Id": 1,
+  "Source": "GDOT",
+  "SourceId": "GDOT-CCTV-0186",
+  "Roadway": "I-75",
+  "Direction": "North",
+  "Latitude": 34.0181,
+  "Longitude": -84.5851,
+  "Location": "I-75 at Barrett Pkwy",
+  "Name": "I-75 : Barrett Pkwy",
+  "Views": [
+   {
+    "Id": 186,
+    "Url": "https://511ga.org/map/Cctv/186",
+    "Status": "Enabled",
+    "Description": "North"
+   }
+  ]
+ },
+ {
+  "Id": 2,
+  "Source": "GDOT",
+  "SourceId": "GDOT-CCTV-9999",
+  "Roadway": "I-16",
+  "Direction": "East",
+  "Latitude": 32.08,
+  "Longitude": -81.1,
+  "Location": "Savannah",
+  "Name": "I-16 : Savannah",
+  "Views": [
+   {
+    "Id": 9999,
+    "Url": "https://511ga.org/map/Cctv/9999",
+    "Status": "Enabled",
+    "Description": "East"
+   }
+  ]
+ },
+ {
+  "Id": 3,
+  "Source": "GDOT",
+  "SourceId": "GDOT-CCTV-0777",
+  "Roadway": "I-75",
+  "Direction": "South",
+  "Latitude": 34.77,
+  "Longitude": -84.97,
+  "Location": "I-75 at Dalton",
+  "Name": "I-75 : Dalton",
+  "Views": [
+   {
+    "Id": 777,
+    "Url": "https://evil.example/map/Cctv/777",
+    "Status": "Enabled",
+    "Description": "South"
+   }
+  ]
+ }
+]

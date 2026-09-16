@@ -1,0 +1,38 @@
+[
+ {
+  "ID": "GDOT-EV-1",
+  "SourceId": "1",
+  "Organization": "GDOT",
+  "RoadwayName": "I-75",
+  "DirectionOfTravel": "Northbound",
+  "Description": "Crash on I-75 northbound at Exit 273",
+  "Reported": 1789505000,
+  "LastUpdated": 1789505500,
+  "StartDate": 1789505000,
+  "PlannedEndDate": null,
+  "LanesAffected": "Right lane blocked",
+  "Latitude": 34.07,
+  "Longitude": -84.58,
+  "EventType": "accidentsAndIncidents",
+  "IsFullClosure": false,
+  "Severity": "Major"
+ },
+ {
+  "ID": "GDOT-EV-2",
+  "SourceId": "2",
+  "Organization": "GDOT",
+  "RoadwayName": "I-95",
+  "DirectionOfTravel": "Southbound",
+  "Description": "Roadwork",
+  "Reported": 1789505000,
+  "LastUpdated": 1789505500,
+  "StartDate": 1789505000,
+  "PlannedEndDate": null,
+  "LanesAffected": "Shoulder",
+  "Latitude": 31.2,
+  "Longitude": -81.5,
+  "EventType": "roadwork",
+  "IsFullClosure": false,
+  "Severity": "Minor"
+ }
+]

@@ -107,6 +107,9 @@
     "./server/providers/atc": {
       "node": "./server/providers/atc.js"
     },
+    "./server/providers/corridor": {
+      "node": "./server/providers/corridor.js"
+    },
     "./server/providers/rooms": {
       "node": "./server/providers/rooms.js"
     },
@@ -170,6 +173,7 @@
     "./layers/alpr": "./src/layers/alpr/index.js",
     "./layers/radio": "./src/layers/radio/index.js",
     "./layers/atc": "./src/layers/atc/index.js",
+    "./layers/corridor": "./src/layers/corridor/index.js",
     "./layers/submarine-cables": "./src/layers/submarineCables/index.js",
     "./sources/bundled-cables": "./src/layers/submarineCables/bundledSource.js",
     "./geography/natural-earth": "./src/data/naturalEarthRegions.js",
@@ -234,6 +238,7 @@
     "./layers/installations/source": "./src/layers/installations/source.js",
     "./layers/launches/source": "./src/layers/launches/source.js",
     "./layers/radio/source": "./src/layers/radio/source.js",
+    "./layers/corridor/source": "./src/layers/corridor/source.js",
     "./layers/satellites/source": "./src/layers/satellites/source.js",
     "./layers/traffic/source": "./src/layers/traffic/source.js",
     "./sources/reference": "./src/sources/reference.js",

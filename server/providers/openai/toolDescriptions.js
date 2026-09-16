@@ -7,7 +7,7 @@ export const ACTION_DESCRIPTIONS = {
       properties: {
         locationId: {
           description:
-            'Known city preset ID. Use when the requested place matches one of these cities.',
+            'Known destination preset ID. Use when the requested place matches one of these: the eight cities, plus chattanooga (Chattanooga / Lovell Field airport KCHA), atlanta (Hartsfield-Jackson KATL), corridor (frames Chattanooga and Atlanta together), daytona (Daytona Beach airport KDAB) and orlando (Orlando International MCO). Prefer the preset over a query for these.',
           $position: 2,
         },
         query: {
@@ -338,6 +338,25 @@ export const ACTION_DESCRIPTIONS = {
           description:
             'Controller position to tune. Omit to let GEV choose (tower for play; altitude-based for nearest).',
           $position: 2,
+        },
+      },
+    },
+  },
+  show_corridor: {
+    description:
+      'Chattanooga ↔ Atlanta corridor briefing: turns on the "Corridor: CHA ↔ ATL" data layer (NWS alerts, road incidents, MARTA/CARTA vehicles, river gauges, air quality, traffic cameras), frames both cities, and optionally returns live counts to read back. Examples: "show me the corridor" → frame=true; "what\'s happening between Chattanooga and Atlanta" → includeSummary=true.',
+    $position: 1,
+    parameters: {
+      properties: {
+        includeSummary: {
+          description:
+            'Set true for a question ("what is happening between Chattanooga and Atlanta?"): the result carries summary.text with alert, incident, transit, river and air-quality counts to speak.',
+          $position: 1,
+        },
+        frame: {
+          description:
+            'Fly the camera to frame the whole corridor. Defaults to true; pass false to enable the layer without moving the camera.',
+          $position: 1,
         },
       },
     },

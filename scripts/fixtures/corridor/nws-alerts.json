@@ -1,0 +1,150 @@
+{
+ "type": "FeatureCollection",
+ "title": "Current watches, warnings, and advisories for Tennessee, Georgia",
+ "updated": "2026-09-16T02:13:15+00:00",
+ "features": [
+  {
+   "id": "https://api.weather.gov/alerts/urn:oid:2.49.0.1.840.0.6692e235eb258e1a46adff51fcf00199e0b75f3d.001.1",
+   "geometry": null,
+   "properties": {
+    "id": "urn:oid:2.49.0.1.840.0.6692e235eb258e1a46adff51fcf00199e0b75f3d.001.1",
+    "areaDesc": "Coastal Bryan; Coastal Chatham; Coastal Liberty; Coastal McIntosh",
+    "sent": "2026-09-15T20:05:00-04:00",
+    "effective": "2026-09-15T20:05:00-04:00",
+    "onset": "2026-09-15T20:05:00-04:00",
+    "expires": "2026-09-16T04:15:00-04:00",
+    "ends": "2026-09-16T20:00:00-04:00",
+    "status": "Actual",
+    "messageType": "Update",
+    "severity": "Moderate",
+    "certainty": "Likely",
+    "urgency": "Expected",
+    "event": "Rip Current Statement",
+    "headline": "Rip Current Statement issued September 15 at 8:05PM EDT until September 16 at 8:00PM EDT by NWS Charleston SC",
+    "senderName": "NWS Charleston SC",
+    "affectedZones": [
+     "https://api.weather.gov/zones/forecast/GAZ217",
+     "https://api.weather.gov/zones/forecast/GAZ219",
+     "https://api.weather.gov/zones/forecast/GAZ239",
+     "https://api.weather.gov/zones/forecast/GAZ241"
+    ],
+    "geocode": {
+     "SAME": [
+      "013029",
+      "013051",
+      "013179",
+      "013191"
+     ],
+     "UGC": [
+      "GAZ217",
+      "GAZ219",
+      "GAZ239",
+      "GAZ241"
+     ]
+    },
+    "description": "* WHAT...Dangerous rip currents.\n\n* WHERE...Georgia Beaches.\n\n* WHEN...Through Wednesday evening.\n\n* IMPACTS...Rip currents can sweep even the best swimmers away\nfrom shore into deeper water."
+   }
+  },
+  {
+   "id": "https://api.weather.gov/alerts/urn:oid:test.poly",
+   "type": "Feature",
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       -84.98,
+       34.7
+      ],
+      [
+       -84.9,
+       34.7
+      ],
+      [
+       -84.9,
+       34.8
+      ],
+      [
+       -84.98,
+       34.8
+      ],
+      [
+       -84.98,
+       34.7
+      ]
+     ]
+    ]
+   },
+   "properties": {
+    "id": "urn:oid:test.poly",
+    "event": "Severe Thunderstorm Warning",
+    "severity": "Severe",
+    "urgency": "Immediate",
+    "certainty": "Observed",
+    "status": "Actual",
+    "headline": "Severe Thunderstorm Warning until 9:45PM",
+    "areaDesc": "Whitfield GA",
+    "senderName": "NWS Peachtree City GA",
+    "onset": "2026-09-15T21:00:00-04:00",
+    "expires": "2026-09-15T21:45:00-04:00",
+    "affectedZones": [
+     "https://api.weather.gov/zones/county/GAC313"
+    ],
+    "geocode": {
+     "UGC": [
+      "GAC313"
+     ]
+    }
+   }
+  },
+  {
+   "id": "https://api.weather.gov/alerts/urn:oid:test.zone",
+   "type": "Feature",
+   "geometry": null,
+   "properties": {
+    "id": "urn:oid:test.zone",
+    "event": "Heat Advisory",
+    "severity": "Moderate",
+    "urgency": "Expected",
+    "certainty": "Likely",
+    "status": "Actual",
+    "headline": "Heat Advisory until 8 PM",
+    "areaDesc": "Hamilton; Whitfield",
+    "senderName": "NWS Morristown TN",
+    "onset": "2026-09-15T12:00:00-04:00",
+    "expires": "2026-09-15T20:00:00-04:00",
+    "affectedZones": [
+     "https://api.weather.gov/zones/forecast/TNZ097",
+     "https://api.weather.gov/zones/forecast/GAZ021"
+    ],
+    "geocode": {
+     "UGC": [
+      "TNZ097",
+      "GAZ021"
+     ]
+    }
+   }
+  },
+  {
+   "id": "https://api.weather.gov/alerts/urn:oid:test.exercise",
+   "type": "Feature",
+   "geometry": null,
+   "properties": {
+    "id": "urn:oid:test.exercise",
+    "event": "Test Message",
+    "severity": "Minor",
+    "status": "Exercise",
+    "headline": "Test",
+    "areaDesc": "Hamilton",
+    "affectedZones": [
+     "https://api.weather.gov/zones/forecast/TNZ097"
+    ],
+    "geocode": {
+     "UGC": [
+      "TNZ097"
+     ]
+    }
+   }
+  }
+ ]
+}

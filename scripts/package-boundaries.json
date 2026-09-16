@@ -1776,7 +1776,13 @@
       "src/rooms/session.js",
       "src/rooms/viewAdapter.js",
       "src/ui/rooms.js",
-      "src/ui/roomControls.js"
+      "src/ui/roomControls.js",
+      "src/layers/corridor/index.js",
+      "src/layers/corridor/constants.js",
+      "src/layers/corridor/model.js",
+      "src/layers/corridor/source.js",
+      "src/layers/corridor/card.js",
+      "src/app/layers/corridor.js"
     ],
     "external": [
       "@mapbox/vector-tile",
@@ -2171,7 +2177,14 @@
       "src/layers/atc/rendering.js",
       "src/layers/atc/selection.js",
       "src/layers/atc/state.js",
-      "src/app/layers/atc.js"
+      "src/app/layers/atc.js",
+      "src/layers/corridor/index.js",
+      "src/layers/corridor/constants.js",
+      "src/layers/corridor/model.js",
+      "src/layers/corridor/source.js",
+      "src/layers/corridor/card.js",
+      "src/app/layers/corridor.js",
+      "src/keySetupCore.mjs"
     ],
     "external": [
       "cesium",
@@ -2605,5 +2618,50 @@
       "scripts/qa-transit-browser.mjs"
     ],
     "external": ["cesium", "pbf"]
+  },
+  "corridor-layer": {
+    "exports": ["./layers/corridor"],
+    "modules": [
+      "src/layers/corridor/index.js",
+      "src/layers/corridor/constants.js",
+      "src/layers/corridor/model.js",
+      "src/layers/corridor/source.js",
+      "src/layers/corridor/card.js",
+      "src/data/inputOwnership.js"
+    ],
+    "external": ["cesium"]
+  },
+  "corridor-source": {
+    "exports": ["./layers/corridor/source"],
+    "modules": ["src/layers/corridor/source.js"],
+    "external": []
+  },
+  "corridor-provider": {
+    "runtime": "node",
+    "exports": ["./server/providers/corridor"],
+    "modules": [
+      "server/providers/corridor.js",
+      "server/providers/corridor/air.js",
+      "server/providers/corridor/cache.js",
+      "server/providers/corridor/cameras.js",
+      "server/providers/corridor/gauges.js",
+      "server/providers/corridor/incidents.js",
+      "server/providers/corridor/keys.js",
+      "server/providers/corridor/nws.js",
+      "server/providers/corridor/routes.js",
+      "server/providers/corridor/transit.js",
+      "server/providers/corridor/upstream.js",
+      "server/providers/common/http.js",
+      "src/sources/httpBody.js",
+      "src/layers/corridor/constants.js",
+      "src/layers/corridor/normalize.js",
+      "server/providers/cctv/media.js",
+      "server/providers/cctv/constants.js",
+      "server/providers/cctv/normalize.js",
+      "src/data/directionText.js",
+      "server/providers/common/geo.js",
+      "src/sources/cctvTypes.js"
+    ],
+    "external": []
   }
 }

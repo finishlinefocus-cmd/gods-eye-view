@@ -32,6 +32,9 @@ export const CREDENTIALS = Object.freeze([
     )),
   },
   { name: 'LL2_API_TOKEN', label: 'Launch Library 2', keychain: [] },
+  { name: 'GA511_API_KEY', label: 'Georgia 511 (corridor cameras)', keychain: [] },
+  { name: 'TDOT_API_KEY', label: 'TDOT OpenData (corridor cameras)', keychain: [] },
+  { name: 'CARTA_BUSTIME_KEY', label: 'CARTA BusTime (corridor transit)', keychain: [] },
 ]);
 
 export function isConfiguredValue(value) {
@@ -150,6 +153,9 @@ export function buildCapabilitySummary(credentials) {
     missions: configured('LL2_API_TOKEN')
       ? 'Launch Library 2 token allowance'
       : 'Launch Library 2 public access',
+    corridor: configured('GA511_API_KEY')
+      ? 'Corridor CHA ↔ ATL: keyless feeds + GDOT cameras/incidents'
+      : 'Corridor CHA ↔ ATL: keyless feeds (GDOT cameras off until a Georgia 511 key is added)',
   };
 }
 
@@ -203,10 +209,11 @@ export function formatSetupReport(report, { readyMessage } = {}) {
     `Fires:   ${report.capabilities.fires}`,
     `Traffic: ${report.capabilities.traffic}`,
     `Missions: ${report.capabilities.missions}`,
+    ...(report.capabilities.corridor ? [`Corridor: ${report.capabilities.corridor}`] : []),
     '',
     'Configured providers:',
     ...CREDENTIALS.map((spec) => {
-      const state = report.credentials[spec.name];
+      const state = report.credentials[spec.name] || { configured: false };
       return state.configured
         ? `  [OK] ${spec.label} (${state.source})`
         : `  [--] ${spec.label}`;

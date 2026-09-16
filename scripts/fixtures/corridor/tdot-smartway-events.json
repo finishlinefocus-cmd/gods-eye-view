@@ -1,0 +1,184 @@
+{
+ "objectIdFieldName": "OBJECTID",
+ "globalIdFieldName": "",
+ "geometryType": "esriGeometryPoint",
+ "spatialReference": {
+  "wkid": 4326,
+  "latestWkid": 4326
+ },
+ "fields": [
+  {
+   "name": "ID",
+   "alias": "ID",
+   "type": "esriFieldTypeString",
+   "length": 255
+  },
+  {
+   "name": "START_DATE",
+   "alias": "Start Date",
+   "type": "esriFieldTypeDate",
+   "length": 8
+  },
+  {
+   "name": "END_DATE",
+   "alias": "End Date",
+   "type": "esriFieldTypeDate",
+   "length": 8
+  },
+  {
+   "name": "REVISED_DATE",
+   "alias": "Revised Date",
+   "type": "esriFieldTypeDate",
+   "length": 8
+  },
+  {
+   "name": "EVENT_TYPE",
+   "alias": "Event Type",
+   "type": "esriFieldTypeString",
+   "length": 255
+  },
+  {
+   "name": "EVENT_SUBTYPE",
+   "alias": "Event SubType",
+   "type": "esriFieldTypeString",
+   "length": 255
+  },
+  {
+   "name": "DESCRIPTION",
+   "alias": "Description",
+   "type": "esriFieldTypeString",
+   "length": 2000
+  },
+  {
+   "name": "VEHICLE_IMPACT",
+   "alias": "Vehicle Impact",
+   "type": "esriFieldTypeString",
+   "length": 255
+  },
+  {
+   "name": "HAS_CLOSURE",
+   "alias": "Has Closure?",
+   "type": "esriFieldTypeSmallInteger"
+  },
+  {
+   "name": "CD_DIRECTION",
+   "alias": "Direction (Closure Details)",
+   "type": "esriFieldTypeString",
+   "length": 255
+  },
+  {
+   "name": "COUNTY_NAME",
+   "alias": "County Name",
+   "type": "esriFieldTypeString",
+   "length": 255
+  },
+  {
+   "name": "CD_ROAD_NAMES",
+   "alias": "Road Names",
+   "type": "esriFieldTypeString",
+   "length": 255
+  }
+ ],
+ "features": [
+  {
+   "attributes": {
+    "ID": "2238919",
+    "START_DATE": 1782946800000,
+    "END_DATE": 1788130800000,
+    "REVISED_DATE": 1788130802000,
+    "EVENT_TYPE": "Operations",
+    "EVENT_SUBTYPE": "ITS Construction",
+    "DESCRIPTION": "Interstate 75 NB in Bradley County - between MILE MARKER 25 and MILE MARKER 33 ITS Construction will result in NB right shoulder blocked Thu 07/02/2026 through Mon 08/31/2026.",
+    "VEHICLE_IMPACT": "Northbound right shoulder blocked",
+    "HAS_CLOSURE": 0,
+    "CD_DIRECTION": "Northbound",
+    "COUNTY_NAME": "Bradley",
+    "CD_ROAD_NAMES": null
+   },
+   "geometry": {
+    "x": -84.84706777299999,
+    "y": 35.23972466999999
+   }
+  },
+  {
+   "attributes": {
+    "ID": "2238918",
+    "START_DATE": 1782946800000,
+    "END_DATE": 1788130800000,
+    "REVISED_DATE": 1788130802000,
+    "EVENT_TYPE": "Operations",
+    "EVENT_SUBTYPE": "ITS Construction",
+    "DESCRIPTION": "Interstate 75 NB in Bradley County - between MILE MARKER 25 and MILE MARKER 33 ITS Construction will result in NB right shoulder blocked Thu 07/02/2026 through Mon 08/31/2026.",
+    "VEHICLE_IMPACT": "Northbound right shoulder blocked",
+    "HAS_CLOSURE": 0,
+    "CD_DIRECTION": "Northbound",
+    "COUNTY_NAME": "Bradley",
+    "CD_ROAD_NAMES": null
+   },
+   "geometry": {
+    "x": -84.84706777299999,
+    "y": 35.23972466999999
+   }
+  },
+  {
+   "attributes": {
+    "ID": "2241513",
+    "START_DATE": 1784700000000,
+    "END_DATE": 1793401200000,
+    "REVISED_DATE": 1784700051000,
+    "EVENT_TYPE": "Operations",
+    "EVENT_SUBTYPE": "Resurfacing",
+    "DESCRIPTION": "State Route 315 NB and SB in Polk County - between LOG MILE 0.0 and LOG MILE 7 Resurfacing with flagging operations may result in delays Mon through Fri. Work is expected to occur between Wed 07/22/2026 and Sat 10/31/2026.",
+    "VEHICLE_IMPACT": "Northbound no lanes blocked",
+    "HAS_CLOSURE": 0,
+    "CD_DIRECTION": "Both Directions",
+    "COUNTY_NAME": "Polk",
+    "CD_ROAD_NAMES": null
+   },
+   "geometry": {
+    "x": -84.47134995699997,
+    "y": 35.221534582000004
+   }
+  },
+  {
+   "attributes": {
+    "ID": "2243381",
+    "START_DATE": 1786341600000,
+    "END_DATE": 1793314800000,
+    "REVISED_DATE": 1786341604000,
+    "EVENT_TYPE": "Operations",
+    "EVENT_SUBTYPE": "Resurfacing",
+    "DESCRIPTION": "State Route 68 WB and EB in Polk County - between LOG MILE 21 and LOG MILE 13 Resurfacing with flagging operations may result in delays Mon 08/10/2026 through Fri 10/30/2026.",
+    "VEHICLE_IMPACT": "Westbound no lanes blocked",
+    "HAS_CLOSURE": 0,
+    "CD_DIRECTION": "Both Directions",
+    "COUNTY_NAME": "Polk",
+    "CD_ROAD_NAMES": null
+   },
+   "geometry": {
+    "x": -84.38838682400001,
+    "y": 35.044755603
+   }
+  },
+  {
+   "attributes": {
+    "ID": "9990001",
+    "START_DATE": 1789494341000,
+    "END_DATE": null,
+    "REVISED_DATE": 1789494455000,
+    "EVENT_TYPE": "Incident",
+    "EVENT_SUBTYPE": "Crash",
+    "DESCRIPTION": "State Route 1 WB in Knox County crash",
+    "VEHICLE_IMPACT": "Westbound right lane blocked",
+    "HAS_CLOSURE": 1,
+    "CD_DIRECTION": "Westbound",
+    "COUNTY_NAME": "Knox",
+    "CD_ROAD_NAMES": null
+   },
+   "geometry": {
+    "x": -83.9533,
+    "y": 35.9508
+   }
+  }
+ ]
+}

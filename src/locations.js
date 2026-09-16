@@ -513,6 +513,176 @@ export const CITY_POIS = {
       },
     ],
   },
+  // Corridor: CHA ↔ ATL destinations. Airport presets open on an airfield
+  // overview (a few km back, looking down the field); the corridor preset
+  // frames both cities and is what "show me the corridor" resolves to.
+  chattanooga: {
+    name: 'Chattanooga',
+    groundElevation: 208,
+    viewBounds: {
+      southwest: { lat: 34.93, lng: -85.45 },
+      northeast: { lat: 35.15, lng: -85.1 },
+    },
+    pois: [
+      {
+        name: 'Chattanooga Airport',
+        lat: 35.0353,
+        lon: -85.2038,
+        alt: 4200,
+        pitch: -42,
+        heading: 20,
+        buildingHeight: 20,
+      },
+      {
+        name: 'Lookout Mountain',
+        lat: 35.0117,
+        lon: -85.3436,
+        alt: 3500,
+        pitch: -30,
+        heading: 35,
+        buildingHeight: 30,
+      },
+      {
+        name: 'Tennessee Aquarium',
+        lat: 35.0557,
+        lon: -85.3111,
+        alt: 700,
+        pitch: -30,
+        heading: 340,
+        buildingHeight: 40,
+      },
+    ],
+  },
+  atlanta: {
+    name: 'Atlanta',
+    groundElevation: 313,
+    viewBounds: {
+      southwest: { lat: 33.58, lng: -84.6 },
+      northeast: { lat: 33.92, lng: -84.25 },
+    },
+    pois: [
+      {
+        name: 'Hartsfield-Jackson Airport',
+        lat: 33.6407,
+        lon: -84.4277,
+        alt: 6500,
+        pitch: -45,
+        heading: 90,
+        buildingHeight: 30,
+      },
+      {
+        name: 'Downtown Atlanta',
+        lat: 33.7573,
+        lon: -84.3963,
+        alt: 1500,
+        pitch: -32,
+        heading: 20,
+        buildingHeight: 200,
+      },
+      {
+        name: 'Mercedes-Benz Stadium',
+        lat: 33.7554,
+        lon: -84.4009,
+        alt: 700,
+        pitch: -35,
+        heading: 300,
+        buildingHeight: 90,
+      },
+    ],
+  },
+  corridor: {
+    name: 'Corridor CHA ↔ ATL',
+    groundElevation: 250,
+    viewBounds: {
+      southwest: { lat: 33.55, lng: -85.5 },
+      northeast: { lat: 35.2, lng: -84.2 },
+    },
+    pois: [
+      {
+        name: 'Corridor Overview',
+        lat: 34.35,
+        lon: -84.87,
+        alt: 300000,
+        pitch: -75,
+        heading: 0,
+        buildingHeight: 0,
+      },
+      {
+        name: 'Chattanooga Airport',
+        lat: 35.0353,
+        lon: -85.2038,
+        alt: 4200,
+        pitch: -42,
+        heading: 20,
+        buildingHeight: 20,
+      },
+      {
+        name: 'Hartsfield-Jackson Airport',
+        lat: 33.6407,
+        lon: -84.4277,
+        alt: 6500,
+        pitch: -45,
+        heading: 90,
+        buildingHeight: 30,
+      },
+    ],
+  },
+  daytona: {
+    name: 'Daytona Beach',
+    groundElevation: 10,
+    viewBounds: {
+      southwest: { lat: 29.08, lng: -81.15 },
+      northeast: { lat: 29.3, lng: -80.95 },
+    },
+    pois: [
+      {
+        name: 'Daytona Beach Airport',
+        lat: 29.1799,
+        lon: -81.0581,
+        alt: 4200,
+        pitch: -42,
+        heading: 70,
+        buildingHeight: 20,
+      },
+      {
+        name: 'Daytona International Speedway',
+        lat: 29.1852,
+        lon: -81.0705,
+        alt: 2500,
+        pitch: -38,
+        heading: 0,
+        buildingHeight: 40,
+      },
+    ],
+  },
+  orlando: {
+    name: 'Orlando',
+    groundElevation: 29,
+    viewBounds: {
+      southwest: { lat: 28.32, lng: -81.5 },
+      northeast: { lat: 28.62, lng: -81.2 },
+    },
+    pois: [
+      {
+        name: 'Orlando International Airport',
+        lat: 28.4312,
+        lon: -81.3081,
+        alt: 6500,
+        pitch: -45,
+        heading: 0,
+        buildingHeight: 30,
+      },
+      {
+        name: 'Downtown Orlando',
+        lat: 28.5421,
+        lon: -81.379,
+        alt: 1200,
+        pitch: -32,
+        heading: 30,
+        buildingHeight: 120,
+      },
+    ],
+  },
 };
 
 /**

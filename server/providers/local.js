@@ -13,6 +13,7 @@ import { cctvProxy } from './cctv.js';
 import { defaultSourceRoot } from './common/source-root.js';
 import { radioBrowserProxy } from './radio.js';
 import { atcProxy } from './atc.js';
+import { corridorProxy } from './corridor.js';
 import { gbfsProxy } from './gbfs.js';
 import { transitProxy } from './transit.js';
 import { adsbLolProxy } from './aircraft/adsb-lol.js';
@@ -41,6 +42,7 @@ function localProviderPlugins() {
     cctvProxy({ sourceRoot: defaultSourceRoot }),
     radioBrowserProxy(),
     atcProxy(),
+    corridorProxy(),
     gbfsProxy(),
     transitProxy(),
     adsbLolProxy(),

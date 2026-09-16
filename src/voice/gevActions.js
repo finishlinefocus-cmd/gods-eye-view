@@ -165,6 +165,12 @@ const LAYER_ALIASES = new Map([
   ['atc radio', 'atc'],
   ['air traffic control', 'atc'],
   ['liveatc', 'atc'],
+  ['corridor', 'corridor'],
+  ['the corridor', 'corridor'],
+  ['corridor layer', 'corridor'],
+  ['chattanooga atlanta', 'corridor'],
+  ['chattanooga to atlanta', 'corridor'],
+  ['i-75 corridor', 'corridor'],
   ['bikeshare', 'bikeshare'],
   ['bikes', 'bikeshare'],
   ['ais', 'ais-live-vessels'],
@@ -196,6 +202,31 @@ const CITY_ALIASES = new Map([
   ['washington', 'dc'],
   ['washington dc', 'dc'],
   ['washington d.c.', 'dc'],
+  ['chattanooga airport', 'chattanooga'],
+  ['chattanooga metropolitan', 'chattanooga'],
+  ['lovell field', 'chattanooga'],
+  ['kcha', 'chattanooga'],
+  ['cha', 'chattanooga'],
+  ['atlanta airport', 'atlanta'],
+  ['hartsfield', 'atlanta'],
+  ['hartsfield-jackson', 'atlanta'],
+  ['hartsfield jackson', 'atlanta'],
+  ['katl', 'atlanta'],
+  ['atl', 'atlanta'],
+  ['the corridor', 'corridor'],
+  ['i-75 corridor', 'corridor'],
+  ['i75 corridor', 'corridor'],
+  ['chattanooga to atlanta', 'corridor'],
+  ['chattanooga atlanta corridor', 'corridor'],
+  ['daytona beach', 'daytona'],
+  ['daytona beach airport', 'daytona'],
+  ['daytona airport', 'daytona'],
+  ['kdab', 'daytona'],
+  ['dab', 'daytona'],
+  ['orlando airport', 'orlando'],
+  ['orlando international', 'orlando'],
+  ['kmco', 'orlando'],
+  ['mco', 'orlando'],
 ]);
 
 // Basemap stack vocabulary. Switching requires an explicit stack name
@@ -894,6 +925,10 @@ export function createGevActionRunner({ viewer, styleManager, dataManager, scene
       return controlAtc(viewer, dataManager, args, runOptions);
     }
 
+    if (name === 'show_corridor') {
+      return showCorridor(viewer, dataManager, args, runOptions);
+    }
+
     if (name === 'control_room') {
       return controlRoom(rooms, args);
     }
@@ -1266,6 +1301,63 @@ async function resolveRadioLocation(args = {}, coordinates = radioCoordinatePair
   if (!place) return null;
   // Localized provider country labels must not become station country filters.
   return { lat: place.lat, lon: place.lng, label: place.label || query, country: '' };
+}
+
+/**
+ * Corridor briefing: enable the "Corridor: CHA ↔ ATL" layer, frame both
+ * cities, and (for a question) return the layer's live counts. Flights in the
+ * corridor bbox are added when the Flights layer is on and exposes records.
+ */
+export async function showCorridor(viewer, dataManager, args = {}, options = {}) {
+  const corridor = dataManager?.layers?.get('corridor')?.module;
+  const lifecycle = () => readLayerLifecycleSummary(dataManager, 'corridor');
+  if (!corridor) {
+    return { ok: false, action: 'show_corridor', error: 'Corridor layer unavailable', ...lifecycle() };
+  }
+  if (options.signal?.aborted) {
+    return { ok: false, action: 'show_corridor', error: 'Corridor request cancelled' };
+  }
+  let enabled = Boolean(dataManager.isEnabled?.('corridor'));
+  if (!enabled) {
+    const enableOptions = { origin: 'voice' };
+    if (options.signal) enableOptions.signal = options.signal;
+    try {
+      enabled = Boolean(await dataManager.setEnabled('corridor', true, enableOptions));
+    } catch (error) {
+      return { ok: false, action: 'show_corridor', error: error?.message || 'Could not enable the corridor layer', ...lifecycle() };
+    }
+  }
+  const frame = args.frame !== false;
+  let framed = false;
+  if (frame && typeof corridor.frameCorridor === 'function') {
+    try {
+      framed = Boolean(await corridor.frameCorridor({ duration: 2.5 }));
+    } catch {
+      framed = false;
+    }
+  }
+  const result = { ok: true, action: 'show_corridor', enabled, framed, ...lifecycle() };
+  if (args.includeSummary === true) {
+    // Give freshly enabled feeds a moment to land before counting.
+    if (typeof corridor.update === 'function') {
+      try {
+        await Promise.race([corridor.update(), new Promise((resolve) => setTimeout(resolve, 4000))]);
+      } catch {
+        /* counts fall back to whatever has arrived */
+      }
+    }
+    const extra = {};
+    const flights = dataManager.layers?.get('flights')?.module;
+    if (dataManager.isEnabled?.('flights') && typeof flights?.getAnalystRecords === 'function' && typeof corridor.isInsideCorridor === 'function') {
+      try {
+        extra.flights = flights.getAnalystRecords(5000).filter((row) => corridor.isInsideCorridor(row.lon, row.lat)).length;
+      } catch {
+        /* optional */
+      }
+    }
+    result.summary = typeof corridor.getSummary === 'function' ? corridor.getSummary(extra) : null;
+  }
+  return result;
 }
 
 /**

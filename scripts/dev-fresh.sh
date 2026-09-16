@@ -62,6 +62,9 @@ KEY_SETUP_EXTERNAL_KEYS=()
 [[ -n "${OPENSKY_CLIENT_ID:-}" ]] && KEY_SETUP_EXTERNAL_KEYS+=(OPENSKY_CLIENT_ID)
 [[ -n "${OPENSKY_CLIENT_SECRET:-}" ]] && KEY_SETUP_EXTERNAL_KEYS+=(OPENSKY_CLIENT_SECRET)
 [[ -n "${LL2_API_TOKEN:-}" ]] && KEY_SETUP_EXTERNAL_KEYS+=(LL2_API_TOKEN)
+[[ -n "${GA511_API_KEY:-}" ]] && KEY_SETUP_EXTERNAL_KEYS+=(GA511_API_KEY)
+[[ -n "${TDOT_API_KEY:-}" ]] && KEY_SETUP_EXTERNAL_KEYS+=(TDOT_API_KEY)
+[[ -n "${CARTA_BUSTIME_KEY:-}" ]] && KEY_SETUP_EXTERNAL_KEYS+=(CARTA_BUSTIME_KEY)
 KEY_SETUP_EXTERNAL_KEYS_CSV="$(IFS=,; printf '%s' "${KEY_SETUP_EXTERNAL_KEYS[*]:-}")"
 
 if command -v npm >/dev/null 2>&1; then
@@ -236,6 +239,9 @@ OPENAI_API_KEY="${OPENAI_API_KEY:-$(read_dotenv_value "OPENAI_API_KEY")}"
 AISSTREAM_API_KEY="${AISSTREAM_API_KEY:-$(read_dotenv_value "AISSTREAM_API_KEY")}"
 CESIUM_ION_TOKEN="${CESIUM_ION_TOKEN:-$(read_dotenv_value "CESIUM_ION_TOKEN")}"
 LL2_API_TOKEN="${LL2_API_TOKEN:-$(read_dotenv_value "LL2_API_TOKEN")}"
+GA511_API_KEY="${GA511_API_KEY:-$(read_dotenv_value "GA511_API_KEY")}"
+TDOT_API_KEY="${TDOT_API_KEY:-$(read_dotenv_value "TDOT_API_KEY")}"
+CARTA_BUSTIME_KEY="${CARTA_BUSTIME_KEY:-$(read_dotenv_value "CARTA_BUSTIME_KEY")}"
 TOMTOM_API_KEY="${TOMTOM_API_KEY:-$(read_dotenv_value "TOMTOM_API_KEY")}"
 FIRMS_MAP_KEY="${FIRMS_MAP_KEY:-$(read_dotenv_value "FIRMS_MAP_KEY")}"
 OPENAI_API_KEY="${OPENAI_API_KEY:-$(read_keychain_secret "openai-api" "api-key")}"
@@ -360,6 +366,7 @@ fi
 [[ -n "${TOMTOM_API_KEY}" ]] && echo "TomTom key (live traffic flow): configured" || echo "TomTom key (live traffic flow): not set — simulated traffic"
 [[ -n "${FIRMS_MAP_KEY}" ]] && echo "NASA FIRMS key (live fires): configured" || echo "NASA FIRMS key (live fires): not set — fires layer requires a key"
 [[ -n "${LL2_API_TOKEN}" ]] && echo "Launch Library 2 token: configured" || echo "Launch Library 2 token: not set — using public access"
+[[ -n "${GA511_API_KEY}" ]] && echo "Georgia 511 key: configured" || echo "Georgia 511 key: not set — corridor cameras/GA incidents off"
 
 # Build the dev server environment explicitly. A value that resolved to
 # nothing is left UNSET instead of being exported empty: Vite backfills its
@@ -420,6 +427,9 @@ put_env_if_set CESIUM_ION_TOKEN "${CESIUM_ION_TOKEN}"
 put_env_if_set TOMTOM_API_KEY "${TOMTOM_API_KEY}"
 put_env_if_set FIRMS_MAP_KEY "${FIRMS_MAP_KEY}"
 put_env_if_set LL2_API_TOKEN "${LL2_API_TOKEN}"
+put_env_if_set GA511_API_KEY "${GA511_API_KEY}"
+put_env_if_set TDOT_API_KEY "${TDOT_API_KEY}"
+put_env_if_set CARTA_BUSTIME_KEY "${CARTA_BUSTIME_KEY}"
 put_env GEV_LAUNCHER "dev-fresh"
 put_env GEV_KEY_SETUP_EXTERNAL_KEYS "${KEY_SETUP_EXTERNAL_KEYS_CSV}"
 
