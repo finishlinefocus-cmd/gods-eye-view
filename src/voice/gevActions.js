@@ -269,7 +269,7 @@ const BASEMAP_CONTEXT_WAIT_MS = 1500;
 const viewTargetCache = new WeakMap();
 
 /** Create application actions over the supplied scene and services. */
-export function createGevActionRunner({ viewer, styleManager, dataManager, sceneDirector = null, annotations = null, rooms = null, placeSearch = unavailablePlaceSearch, floorServices = defaultFloorServices, annotationResolver = defaultAnnotationResolver, searchNavigation = searchAndFlyTo }) {
+export function createGevActionRunner({ viewer, styleManager, dataManager, sceneDirector = null, annotations = null, rooms = null, profiles = null, placeSearch = unavailablePlaceSearch, floorServices = defaultFloorServices, annotationResolver = defaultAnnotationResolver, searchNavigation = searchAndFlyTo }) {
   // Voice enable times and analyst follow-up memory belong to this runner.
   const _layerEnabledAt = new Map();
   let analystEngine;
@@ -754,6 +754,10 @@ export function createGevActionRunner({ viewer, styleManager, dataManager, scene
     }
 
     if (name === 'fly_to_location') {
+      // A spoken destination that names one of the signed-in profile's saved
+      // places flies to that exact camera — checked before any geocoding.
+      const savedPlace = flyToSavedPlace(profiles, args);
+      if (savedPlace) return savedPlace;
       return flyToRequestedLocation(viewer, args, {
         placeSearch, searchNavigation, signal: runOptions.signal,
         runImmediate: typeof styleManager?.runImmediateLocationNavigation === 'function'
@@ -896,6 +900,10 @@ export function createGevActionRunner({ viewer, styleManager, dataManager, scene
 
     if (name === 'control_room') {
       return controlRoom(rooms, args);
+    }
+
+    if (name === 'control_profile') {
+      return controlProfile(profiles, args);
     }
 
     if (name === 'track_entity') {
@@ -1406,6 +1414,87 @@ export async function controlRoom(rooms, args = {}) {
         return ok();
       default:
         return fail(`Unsupported room action: ${action || 'missing'}`);
+    }
+  } catch (error) {
+    return fail(error?.message || String(error));
+  }
+}
+
+/**
+ * Client-side saved-place match for fly_to_location: when the query (not a
+ * curated locationId or raw coordinates) names a saved place, fly there and
+ * answer without geocoding. Null when nothing matches or nobody is signed in.
+ */
+export function flyToSavedPlace(profiles, args = {}) {
+  if (!profiles?.signedIn || typeof profiles.findPlace !== 'function') return null;
+  if (Number.isFinite(Number(args.latitude)) && Number.isFinite(Number(args.longitude))) return null;
+  const query = String(args.query || args.locationId || '').trim();
+  if (!query) return null;
+  const place = profiles.findPlace(query);
+  if (!place) return null;
+  const flown = profiles.flyToPlace(place);
+  if (!flown) {
+    return { ok: false, action: 'fly_to_location', query, label: place.name, error: 'Exit Cockpit to fly to a saved place' };
+  }
+  return {
+    ok: true,
+    action: 'fly_to_location',
+    query,
+    label: place.name,
+    savedPlace: true,
+    navigationMode: 'saved-place',
+    latitude: place.lat,
+    longitude: place.lon,
+    rangeM: Number.isFinite(place.height) ? Math.round(place.height) : null,
+  };
+}
+
+/** Voice profile controls over the ProfileSession's public surface (`src/profiles/session.js`). */
+export async function controlProfile(profiles, args = {}) {
+  const action = String(args.action || '').trim().toLowerCase();
+  const fail = (error) => ({ ok: false, action: 'control_profile', profileAction: action, error });
+  if (!profiles) return fail('Profiles are unavailable in this session');
+  const snapshot = () => {
+    const state = profiles.state || {};
+    const places = profiles.savedPlaces || [];
+    return {
+      signedIn: Boolean(profiles.signedIn),
+      name: state.name || null,
+      online: state.online !== false,
+      devices: state.devices || 0,
+      hasHome: Boolean(state.profile?.homeView?.camera),
+      savedPlaces: places.map((place) => place.name),
+    };
+  };
+  const ok = (extra = {}) => ({ ok: true, action: 'control_profile', profileAction: action, ...extra, ...snapshot() });
+  if (action === 'status') return ok();
+  if (!profiles.signedIn) return fail('Nobody is signed in — open the PROFILE chip to sign in');
+  try {
+    switch (action) {
+      case 'save_place': {
+        const name = String(args.name || '').trim();
+        if (!name) return fail('A name for the place is required');
+        const place = profiles.savePlace(name);
+        return place ? ok({ saved: place.name }) : fail('Could not read the current view');
+      }
+      case 'go_home': {
+        if (!snapshot().hasHome) return fail('No home view saved yet — say "set this as my home view" first');
+        return profiles.goHome() ? ok({ flying: 'home' }) : fail('Exit Cockpit to fly home');
+      }
+      case 'set_home':
+        return profiles.setHome() ? ok({ homeSet: true }) : fail('Could not read the current view');
+      case 'sync': {
+        await profiles.syncNow();
+        const { online } = snapshot();
+        return online ? ok({ synced: true }) : fail('Profile server unreachable — working from the local copy');
+      }
+      case 'sign_out': {
+        const name = snapshot().name;
+        await profiles.logout();
+        return ok({ signedOut: name });
+      }
+      default:
+        return fail(`Unsupported profile action: ${action || 'missing'}`);
     }
   } catch (error) {
     return fail(error?.message || String(error));

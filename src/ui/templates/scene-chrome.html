@@ -33,6 +33,11 @@
       <span class="room-chip-label">ROOM</span>
       <span id="room-chip-count" class="room-chip-count" hidden></span>
     </button>
+    <button id="profile-chip" type="button" class="room-chip profile-chip" aria-label="Profile: preferences that follow you between devices" title="Profile: sign in to sync your preferences and saved places" aria-expanded="false" aria-controls="profile-panel" data-profile-state="signed-out">
+      <span class="room-chip-dot profile-chip-dot" aria-hidden="true"></span>
+      <span class="room-chip-label">PROFILE</span>
+      <span id="profile-chip-badge" class="profile-chip-badge" hidden>offline</span>
+    </button>
     <button id="tilt-map-view" type="button" aria-label="Tilt map to oblique view" aria-pressed="false" title="Toggle straight-down and tilted map views">
       <span class="material-symbols-outlined" aria-hidden="true">view_in_ar</span>
     </button>
@@ -110,6 +115,60 @@
           <input id="room-chat-input" type="text" maxlength="500" placeholder="Message the room" aria-label="Chat message" />
           <button type="submit" class="room-btn">SEND</button>
         </form>
+      </div>
+    </div>
+  </section>
+  <!-- Profiles: preferences + saved places that follow a person between devices (opened from the PROFILE chip) -->
+  <section id="profile-panel" class="room-panel profile-panel" role="dialog" aria-modal="false" aria-labelledby="profile-panel-title" hidden>
+    <div class="room-panel-header">
+      <span id="profile-panel-title" class="room-panel-title">PROFILE</span>
+      <span id="profile-status" class="room-status profile-status" data-state="signed-out" role="status" aria-live="polite">Not signed in</span>
+      <button id="profile-close-btn" type="button" class="room-icon-btn" aria-label="Close profile panel">×</button>
+    </div>
+    <div id="profile-notice" class="room-notice" role="status" aria-live="polite" hidden></div>
+    <form id="profile-login-form" class="profile-login" autocomplete="off">
+      <label class="room-field">
+        <span class="room-field-label">NAME</span>
+        <input id="profile-name-input" type="text" maxlength="32" autocomplete="username" spellcheck="false" placeholder="Your name" />
+      </label>
+      <label class="room-field">
+        <span class="room-field-label">PIN (4-8 DIGITS)</span>
+        <input id="profile-pin-input" type="password" inputmode="numeric" pattern="[0-9]{4,8}" minlength="4" maxlength="8" autocomplete="current-password" placeholder="••••" />
+      </label>
+      <label class="room-follow-toggle profile-remember">
+        <input id="profile-remember-input" type="checkbox" checked />
+        <span>REMEMBER ON THIS DEVICE</span>
+      </label>
+      <div class="room-entry-actions">
+        <button id="profile-login-btn" type="submit" class="room-btn room-btn-primary">SIGN IN</button>
+      </div>
+      <p class="room-privacy">A new name + PIN creates a profile. Profiles hold your visual style, favourite layers, voice mode, room name, home view and saved places — never keys. The PIN is stored hashed on the server and never on this device.</p>
+    </form>
+    <div id="profile-signed-in" class="room-live profile-signed-in" hidden>
+      <div class="profile-identity-row">
+        <span id="profile-name" class="profile-name"></span>
+        <span id="profile-devices" class="profile-devices"></span>
+        <span id="profile-sync-state" class="profile-sync-state" aria-live="polite"></span>
+      </div>
+      <div class="room-actions-row">
+        <button id="profile-sync-btn" type="button" class="room-btn">SYNC NOW</button>
+        <button id="profile-home-btn" type="button" class="room-btn" title="Fly to your saved home view" hidden>GO TO HOME VIEW</button>
+        <button id="profile-set-home-btn" type="button" class="room-btn room-btn-quiet" title="Make the current view your home view">SET HOME</button>
+      </div>
+      <form id="profile-place-form" class="room-join-form profile-place-form" autocomplete="off">
+        <label class="room-field">
+          <span class="room-field-label">★ SAVE THIS VIEW AS</span>
+          <input id="profile-place-input" type="text" maxlength="80" spellcheck="false" placeholder="e.g. Office roof" />
+        </label>
+        <button id="profile-place-btn" type="submit" class="room-btn room-btn-primary">SAVE</button>
+      </form>
+      <div class="room-section">
+        <span class="room-section-title">SAVED PLACES</span>
+        <ul id="profile-places" class="room-moments profile-places" aria-label="Saved places"></ul>
+      </div>
+      <div class="room-actions-row profile-signout-row">
+        <button id="profile-logout-btn" type="button" class="room-btn room-btn-quiet">SIGN OUT</button>
+        <button id="profile-logout-all-btn" type="button" class="room-btn room-btn-quiet" title="Revoke every device's sign-in for this profile">SIGN OUT EVERYWHERE</button>
       </div>
     </div>
   </section>

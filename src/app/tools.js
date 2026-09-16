@@ -6,6 +6,10 @@ import { RoomSession } from '../rooms/session.js';
 import { readRoomsBaseUrl } from '../rooms/baseUrl.js';
 import { createRoomViewAdapter } from '../rooms/viewAdapter.js';
 import { RoomControls } from '../ui/rooms.js';
+import { ProfileSession } from '../profiles/session.js';
+import { readProfilesBaseUrl } from '../profiles/baseUrl.js';
+import { createProfileBindings } from '../profiles/bindings.js';
+import { ProfileControls } from '../ui/profiles.js';
 import { installScopeMask, destroyScopeMask } from '../scopeMask.js';
 import {
   installRenderGovernor,
@@ -120,6 +124,32 @@ export function createApplicationTools({
     roomView.destroy();
   });
 
+  // Profiles: preferences + saved places that follow a person between the
+  // lab's devices. The bindings are the only piece that touches the app;
+  // VITE_PROFILES_BASE_URL / localStorage.gevProfilesBaseUrl point every
+  // instance at the one profile store (the Pi); empty means this origin.
+  let voiceCommandsRef = null;
+  const profileBindings = createProfileBindings({
+    styleManager,
+    dataManager,
+    rooms,
+    getVoiceCommands: () => voiceCommandsRef,
+    toast: (message) => styleManager._showToast?.(message),
+  });
+  const profiles = new ProfileSession({
+    baseUrl: readProfilesBaseUrl(),
+    bindings: profileBindings,
+  });
+  const profileControls = new ProfileControls({
+    session: profiles,
+    rooms,
+    toast: (message) => styleManager._showToast?.(message),
+  });
+  defer(() => {
+    profileControls.destroy();
+    profiles.destroy();
+  });
+
   window.__godsEyeView = {
     viewer,
     styleManager,
@@ -127,6 +157,7 @@ export function createApplicationTools({
     dataManager,
     sceneDirector,
     rooms,
+    profiles,
     mapStackController,
     annotations,
     weatherEffects,
@@ -152,7 +183,12 @@ export function createApplicationTools({
     sceneDirector,
     annotations,
     rooms,
+    profiles,
   });
+  voiceCommandsRef = voiceCommands;
+  // Resume a remembered sign-in once voice exists (the profile's voice mode
+  // needs the LOCAL toggle to be there). Offline → cached copy, no error.
+  void profiles.start();
   defer(() => {
     voiceCommands.stop({ removeUi: true });
     if (window.__gevVoiceCommands === voiceCommands)

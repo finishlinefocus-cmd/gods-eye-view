@@ -11,7 +11,9 @@ import { normalizeRadioCountryInput } from '../data/radioCountry.js';
 import { TR3B_CLASS } from '../data/tr3bRegistry.js';
 import {
   controlAtc,
+  controlProfile,
   controlRoom,
+  flyToSavedPlace,
   spokenRoomCode,
   controlCctv,
   controlRadio as runControlRadio,
@@ -3395,4 +3397,141 @@ test('voice rooms: create/join/leave/lead/follow/share/ping/status over the Room
   const viaRunner = await runner('control_room', { action: 'status' });
   assert.equal(viaRunner.action, 'control_room');
   assert.equal(viaRunner.roomId, 'ABC234');
+});
+
+function fakeProfiles({ signedIn = true, places = [], home = null } = {}) {
+  const calls = [];
+  const profiles = {
+    calls,
+    state: {
+      name: signedIn ? 'Sterling' : '',
+      online: true,
+      devices: 2,
+      profile: { savedPlaces: places, homeView: home ? { camera: home } : null },
+    },
+    get signedIn() {
+      return signedIn;
+    },
+    get savedPlaces() {
+      return places;
+    },
+    findPlace(query) {
+      const wanted = String(query).toLowerCase();
+      return places.find((p) => p.id === query || wanted.includes(p.name.toLowerCase())) || null;
+    },
+    flyToPlace(place) {
+      calls.push(['fly', place.name]);
+      return place;
+    },
+    savePlace(name) {
+      calls.push(['save', name]);
+      const place = { id: `p${places.length + 1}`, name, lat: 1, lon: 2 };
+      places.push(place);
+      return place;
+    },
+    setHome() {
+      calls.push(['setHome']);
+      profiles.state.profile.homeView = { camera: { lat: 1, lon: 2 } };
+      return true;
+    },
+    goHome() {
+      calls.push(['goHome']);
+      return true;
+    },
+    async syncNow() {
+      calls.push(['sync']);
+    },
+    async logout() {
+      calls.push(['logout']);
+      signedIn = false;
+      profiles.state.name = '';
+    },
+  };
+  return profiles;
+}
+
+test('voice profiles: save_place/go_home/set_home/sync/sign_out/status over the ProfileSession surface', async () => {
+  const profiles = fakeProfiles({ places: [{ id: 'p1', name: 'Office roof', lat: 35, lon: -85, height: 400 }] });
+
+  const status = await controlProfile(profiles, { action: 'status' });
+  assert.equal(status.ok, true);
+  assert.equal(status.action, 'control_profile');
+  assert.equal(status.profileAction, 'status');
+  assert.equal(status.name, 'Sterling');
+  assert.deepEqual(status.savedPlaces, ['Office roof']);
+  assert.equal(status.hasHome, false);
+
+  assert.match((await controlProfile(profiles, { action: 'save_place' })).error, /name/);
+  const saved = await controlProfile(profiles, { action: 'save_place', name: ' The Lab ' });
+  assert.equal(saved.ok, true);
+  assert.equal(saved.saved, 'The Lab');
+  assert.deepEqual(saved.savedPlaces, ['Office roof', 'The Lab']);
+
+  const noHome = await controlProfile(profiles, { action: 'go_home' });
+  assert.equal(noHome.ok, false);
+  assert.match(noHome.error, /home view/);
+  assert.equal((await controlProfile(profiles, { action: 'set_home' })).homeSet, true);
+  assert.equal((await controlProfile(profiles, { action: 'go_home' })).flying, 'home');
+  assert.equal((await controlProfile(profiles, { action: 'sync' })).synced, true);
+  assert.match((await controlProfile(profiles, { action: 'dance' })).error, /Unsupported profile action/);
+
+  const out = await controlProfile(profiles, { action: 'sign_out' });
+  assert.equal(out.ok, true);
+  assert.equal(out.signedOut, 'Sterling');
+  assert.equal(out.signedIn, false);
+  assert.deepEqual(
+    profiles.calls.map((c) => c[0]),
+    ['save', 'setHome', 'goHome', 'sync', 'logout'],
+  );
+
+  // Signed out: only status answers; everything else explains how to sign in.
+  const signedOut = await controlProfile(profiles, { action: 'save_place', name: 'x' });
+  assert.equal(signedOut.ok, false);
+  assert.match(signedOut.error, /PROFILE chip/);
+  assert.equal((await controlProfile(profiles, { action: 'status' })).ok, true);
+  assert.match((await controlProfile(null, { action: 'status' })).error, /unavailable/);
+});
+
+test('voice: a destination naming a saved place flies there before any geocoding', async () => {
+  const profiles = fakeProfiles({ places: [{ id: 'p1', name: 'Office roof', lat: 35.04, lon: -85.3, height: 400 }] });
+  const hit = flyToSavedPlace(profiles, { query: 'take me to the office roof' });
+  assert.equal(hit.ok, true);
+  assert.equal(hit.action, 'fly_to_location');
+  assert.equal(hit.savedPlace, true);
+  assert.equal(hit.navigationMode, 'saved-place');
+  assert.equal(hit.label, 'Office roof');
+  assert.equal(hit.latitude, 35.04);
+  assert.equal(hit.rangeM, 400);
+  assert.deepEqual(profiles.calls, [['fly', 'Office roof']]);
+
+  assert.equal(flyToSavedPlace(profiles, { query: 'Paris' }), null, 'unknown names fall through to geocoding');
+  assert.equal(flyToSavedPlace(profiles, { latitude: 1, longitude: 2, query: 'office roof' }), null, 'explicit coordinates win');
+  assert.equal(flyToSavedPlace(profiles, {}), null);
+  assert.equal(flyToSavedPlace(fakeProfiles({ signedIn: false, places: profiles.savedPlaces }), { query: 'office roof' }), null);
+  assert.equal(flyToSavedPlace(null, { query: 'office roof' }), null);
+  profiles.flyToPlace = () => null;
+  const refused = flyToSavedPlace(profiles, { query: 'office roof' });
+  assert.equal(refused.ok, false);
+  assert.match(refused.error, /Cockpit/);
+
+  // Through the runner: the schema is registered and both branches dispatch.
+  assert.ok(GEV_REALTIME_TOOLS.some((tool) => tool.name === 'control_profile'));
+  const live = fakeProfiles({ places: [{ id: 'p1', name: 'Office roof', lat: 35.04, lon: -85.3 }] });
+  globalThis.window = globalThis.window || { clearTimeout, setTimeout, requestIdleCallback: null };
+  const runner = createGevActionRunner({
+    viewer: {
+      clock: { onTick: { addEventListener: () => () => {} } },
+      scene: { canvas: { addEventListener() {}, removeEventListener() {} } },
+      camera: { moveEnd: { addEventListener() {} } },
+    },
+    styleManager: {},
+    dataManager: { layers: new Map() },
+    profiles: live,
+  });
+  const viaRunner = await runner('control_profile', { action: 'status' });
+  assert.equal(viaRunner.action, 'control_profile');
+  assert.deepEqual(viaRunner.savedPlaces, ['Office roof']);
+  const flown = await runner('fly_to_location', { query: 'the office roof' });
+  assert.equal(flown.savedPlace, true);
+  assert.deepEqual(live.calls, [['fly', 'Office roof']]);
 });
