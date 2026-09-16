@@ -618,6 +618,31 @@ const schemas = [
     },
   },
   {
+    name: 'control_profile',
+    parameters: {
+      type: 'object',
+      additionalProperties: false,
+      properties: {
+        action: {
+          type: 'string',
+          enum: [
+            'save_place',
+            'go_home',
+            'set_home',
+            'sync',
+            'sign_out',
+            'status',
+          ],
+        },
+        name: {
+          type: 'string',
+          maxLength: 80,
+        },
+      },
+      required: ['action'],
+    },
+  },
+  {
     name: 'track_entity',
     parameters: {
       type: 'object',

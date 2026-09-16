@@ -663,13 +663,14 @@ test('the voice TOOL SCHEMA matches the pinned release — the mission mapping i
   // release schema before formatting (the previous source-byte pin passed).
   const block = JSON.stringify(GEV_REALTIME_TOOLS);
   // Re-pinned when the ATC Radio tool (control_atc) and its layer/panel ids were
-  // added, then again for the Rooms tool (control_room), and again for the
+  // added, then again for the Rooms tool (control_room), again for the
   // Corridor pack (show_corridor + the chattanooga/atlanta/corridor/daytona/
-  // orlando destination presets).
-  assert.equal(block.length, 30058, 'serialized tool schema length drifted');
+  // orlando destination presets), and again for the Profiles tool
+  // (control_profile).
+  assert.equal(block.length, 31112, 'serialized tool schema length drifted');
   assert.equal(
     crypto.createHash('sha256').update(block).digest('hex'),
-    '74d5ff829ffa1317351eeeea834c784b17d0e918b5e2eb25a0882449ef8b1175',
+    'ae4b97d93e2586728e0e5e2f2392bc014317eb7cbee932d1bbfe0e5f5a9e63e0',
     'the first-run missions must ride EXISTING tools: no schema edit, no cache bust',
   );
   const instructions = fs.readFileSync(new URL('../server/providers/openai/instructions.js', import.meta.url), 'utf8');

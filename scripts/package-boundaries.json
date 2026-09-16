@@ -213,6 +213,19 @@
     ],
     "external": []
   },
+  "profiles-provider": {
+    "runtime": "node",
+    "exports": ["./server/providers/profiles"],
+    "modules": [
+      "server/providers/profiles.js",
+      "server/providers/profiles/store.js",
+      "server/providers/profiles/transport.js",
+      "server/providers/common/rate-limit.js",
+      "server/providers/common/cors.js",
+      "src/profiles/schema.js"
+    ],
+    "external": []
+  },
   "overpass-provider": {
     "runtime": "node",
     "exports": ["./server/providers/overpass"],
@@ -453,6 +466,21 @@
       "src/rooms/client.js",
       "src/rooms/follow.js",
       "src/rooms/protocol.js"
+    ],
+    "external": []
+  },
+  "profiles-controls": {
+    "exports": ["./ui/profiles"],
+    "modules": ["src/ui/profiles.js", "src/ui/profileControls.js"],
+    "external": []
+  },
+  "profiles-session": {
+    "exports": ["./profiles"],
+    "modules": [
+      "src/profiles/session.js",
+      "src/profiles/client.js",
+      "src/profiles/baseUrl.js",
+      "src/profiles/schema.js"
     ],
     "external": []
   },
@@ -1782,7 +1810,14 @@
       "src/layers/corridor/model.js",
       "src/layers/corridor/source.js",
       "src/layers/corridor/card.js",
-      "src/app/layers/corridor.js"
+      "src/app/layers/corridor.js",
+      "src/profiles/schema.js",
+      "src/profiles/baseUrl.js",
+      "src/profiles/client.js",
+      "src/profiles/session.js",
+      "src/profiles/bindings.js",
+      "src/ui/profiles.js",
+      "src/ui/profileControls.js"
     ],
     "external": [
       "@mapbox/vector-tile",

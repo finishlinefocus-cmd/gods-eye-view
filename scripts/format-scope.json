@@ -786,5 +786,21 @@
   "src/tooling/corridorProvider.test.mjs",
   "src/app/layers/corridor.js",
   "src/ui/styles/corridor.css",
-  "docs/CORRIDOR_SOURCES.md"
+  "docs/CORRIDOR_SOURCES.md",
+  "server/providers/profiles.js",
+  "server/providers/profiles/store.js",
+  "server/providers/profiles/transport.js",
+  "server/providers/common/cors.js",
+  "src/profiles/schema.js",
+  "src/profiles/baseUrl.js",
+  "src/profiles/client.js",
+  "src/profiles/session.js",
+  "src/profiles/bindings.js",
+  "src/ui/profiles.js",
+  "src/ui/profileControls.js",
+  "src/ui/styles/profiles.css",
+  "src/profiles/schema.test.mjs",
+  "src/profiles/session.test.mjs",
+  "src/profiles/baseUrl.test.mjs",
+  "src/tooling/profilesProvider.test.mjs"
 ]

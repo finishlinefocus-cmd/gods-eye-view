@@ -384,6 +384,25 @@ export const ACTION_DESCRIPTIONS = {
       },
     },
   },
+  control_profile: {
+    description:
+      'The signed-in user profile (preferences and saved places that follow them between devices). save_place stores the current view under name ("save this as the office roof"); go_home flies to the profile\'s home view; set_home makes the current view the home view; sync pushes/pulls now; sign_out signs this device out; status reports who is signed in and lists saved place names. Saved places are also destinations: "take me to the office roof" is fly_to_location with that query, which GEV resolves against saved places before geocoding. Requires a signed-in profile (ok=false otherwise).',
+    $position: 1,
+    parameters: {
+      properties: {
+        action: {
+          description:
+            'save_place, go_home, set_home, sync, sign_out or status.',
+          $position: 2,
+        },
+        name: {
+          description:
+            'Name for save_place ("office roof", "grandma\'s house"). Ignored otherwise.',
+          $position: 2,
+        },
+      },
+    },
+  },
   track_entity: {
     description:
       'Find and follow a specific aircraft (callsign/ICAO hex), ship (name/MMSI), or satellite (name/NORAD id) on enabled layers. Camera follows the entity.',

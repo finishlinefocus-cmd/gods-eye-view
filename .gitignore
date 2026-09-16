@@ -12,3 +12,6 @@ output/
 3d-models/
 pinokio/ENVIRONMENT
 pinokio/.installed
+
+# Profiles store (server/providers/profiles.js); on the Pi: /var/lib/gev/profiles
+.data/

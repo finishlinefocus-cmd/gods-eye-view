@@ -1,0 +1,148 @@
+/* ── Profiles: preferences that follow a person (chip next to ROOM + panel) ──
+   Shares the rooms panel vocabulary (.room-panel, .room-btn, .room-field…);
+   only the profile-specific bits live here. */
+#top-center-actions #profile-chip {
+  width: auto;
+  min-width: 36px;
+  padding: 0 12px 0 10px;
+  gap: 6px;
+  border-radius: 18px;
+  font: 600 9px/1 var(--font-mono);
+  letter-spacing: 0.14em;
+}
+#top-center-actions #profile-chip:hover,
+#top-center-actions #profile-chip:focus-visible {
+  transform: scale(1.04);
+}
+#profile-chip[data-profile-state='signed-in'] {
+  border-color: rgba(255, 214, 102, 0.55);
+  color: var(--text-primary);
+}
+#profile-chip[data-profile-state='signed-in'] .profile-chip-dot {
+  background: #ffd666;
+  box-shadow: 0 0 10px rgba(255, 214, 102, 0.7);
+}
+#profile-chip[data-profile-state='signing-in'] .profile-chip-dot {
+  background: #ffe066;
+  animation: room-pulse 1.1s ease-in-out infinite;
+}
+#profile-chip[data-profile-state='signed-in'][data-online='false']
+  .profile-chip-dot {
+  background: #ff9b5c;
+  box-shadow: none;
+}
+#profile-chip[aria-expanded='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.profile-chip-badge {
+  padding: 2px 6px;
+  border-radius: 9px;
+  background: rgba(255, 155, 92, 0.18);
+  color: #ffc39b;
+  font-size: 8px;
+  letter-spacing: 0.08em;
+}
+.profile-chip-badge[hidden] {
+  display: none;
+}
+
+/* Panel specifics */
+.profile-panel {
+  width: min(92vw, 400px);
+}
+.profile-status[data-state='signed-in'] {
+  color: #ffe9a3;
+}
+.profile-status[data-state='offline'] {
+  color: #ffc39b;
+}
+.profile-login {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.profile-login[hidden],
+.profile-signed-in[hidden],
+#profile-home-btn[hidden] {
+  display: none;
+}
+.profile-panel input[type='password'] {
+  width: 100%;
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid rgba(123, 189, 211, 0.28);
+  border-radius: 6px;
+  background: rgba(4, 10, 16, 0.7);
+  color: var(--text-primary);
+  font: 14px/1.3 var(--font-mono);
+  letter-spacing: 0.3em;
+  outline: none;
+}
+.profile-panel input[type='password']:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-dim);
+}
+.profile-remember {
+  align-self: flex-start;
+}
+.profile-identity-row {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.profile-name {
+  color: #fff;
+  font: 600 14px/1.2 var(--font-sans);
+}
+.profile-devices {
+  color: var(--text-secondary);
+  font: 9px/1.2 var(--font-mono);
+  letter-spacing: 0.08em;
+}
+.profile-sync-state {
+  margin-left: auto;
+  color: var(--text-dim);
+  font: 9px/1.2 var(--font-mono);
+  letter-spacing: 0.06em;
+}
+.profile-sync-state[data-online='false'] {
+  color: #ffc39b;
+}
+.profile-place-form .room-btn {
+  align-self: flex-end;
+}
+.profile-places {
+  max-height: 220px;
+  overflow: hidden auto;
+}
+.profile-place {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.profile-place .room-moment-btn {
+  flex: 1;
+  min-width: 0;
+}
+.profile-place-star {
+  color: #ffd666;
+  font-size: 12px;
+}
+.profile-place-share {
+  min-height: 26px;
+  padding: 4px 8px;
+}
+.profile-signout-row {
+  justify-content: space-between;
+  padding-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Hidden with the rest of the chrome in immersive modes. */
+body.cockpit-mode #profile-panel,
+body.ui-clean-view #profile-panel,
+body.recording-mode #profile-panel {
+  display: none !important;
+}
